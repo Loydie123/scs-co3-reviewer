@@ -1,4 +1,4 @@
-import type { Question, QuizState, QuizResult, DomainPerformance, QuestionResult, DomainId } from "@/types";
+import type { QuizState, QuizResult, DomainPerformance, QuestionResult, DomainId } from "@/types";
 
 export function calculateQuizResult(state: QuizState): QuizResult {
   const questionResults: QuestionResult[] = state.questions.map((question) => {

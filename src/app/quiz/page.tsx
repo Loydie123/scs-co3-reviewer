@@ -16,16 +16,15 @@ import type { DomainId, QuizState, Question } from "@/types";
 
 export default function QuizPage() {
   const router = useRouter();
-  const [selectedDomain, setSelectedDomain] = useState<DomainId | null>(null);
-  const [quizState, setQuizState] = useState<QuizState | null>(null);
-
-  useEffect(() => {
-    const savedState = localStorage.getItem("quizInProgress");
-    if (savedState) {
-      const state: QuizState = JSON.parse(savedState);
-      setQuizState(state);
+  const [quizState, setQuizState] = useState<QuizState | null>(() => {
+    if (typeof window !== "undefined") {
+      const savedState = localStorage.getItem("quizInProgress");
+      if (savedState) {
+        return JSON.parse(savedState);
+      }
     }
-  }, []);
+    return null;
+  });
 
   useEffect(() => {
     if (quizState && !quizState.isSubmitted) {
@@ -55,7 +54,6 @@ export default function QuizPage() {
       const shuffled = shuffleQuestions(questions);
       const newState = initializeQuiz(shuffled);
       setQuizState(newState);
-      setSelectedDomain(domainId === "mixed" ? null : domainId);
       localStorage.removeItem("quizInProgress");
     }
   };

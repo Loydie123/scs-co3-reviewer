@@ -1,4 +1,4 @@
-import type { Question, QuizState, QuizResult, DomainPerformance, QuestionResult } from "@/types";
+import type { Question, QuizState } from "@/types";
 
 export function initializeQuiz(questions: Question[]): QuizState {
   return {

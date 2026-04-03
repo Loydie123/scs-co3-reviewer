@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Navbar, QuestionCard, QuizProgress, QuestionNavigator } from "@/components";
+import { Navbar, QuestionCard, QuestionNavigator } from "@/components";
 import detectionQuiz from "@/data/quizzes/detection.json";
 import incidentResponseQuiz from "@/data/quizzes/incident-response.json";
 import infrastructureSecurityQuiz from "@/data/quizzes/infrastructure-security.json";
 import iamQuiz from "@/data/quizzes/iam.json";
 import dataProtectionQuiz from "@/data/quizzes/data-protection.json";
 import governanceQuiz from "@/data/quizzes/governance.json";
-import { initializeQuiz, shuffleQuestions, answerQuestion, nextQuestion, previousQuestion, submitQuiz, isQuizComplete, getProgress } from "@/lib";
+import { initializeQuiz, shuffleQuestions, answerQuestion, nextQuestion, previousQuestion, submitQuiz, getProgress } from "@/lib";
 import type { QuizState, Question } from "@/types";
 
 const EXAM_DURATION = 170 * 60 * 1000;
@@ -19,6 +19,15 @@ export default function MockExamPage() {
   const [quizState, setQuizState] = useState<QuizState | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number>(EXAM_DURATION);
   const [isStarted, setIsStarted] = useState(false);
+
+  const handleSubmit = useCallback(() => {
+    if (!quizState) return;
+    const updatedState = submitQuiz(quizState);
+    setQuizState(updatedState);
+    
+    localStorage.setItem("quizState", JSON.stringify(updatedState));
+    router.push("/results");
+  }, [quizState, router]);
 
   useEffect(() => {
     if (!isStarted || !quizState) return;
@@ -34,7 +43,7 @@ export default function MockExamPage() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isStarted, quizState]);
+  }, [isStarted, quizState, handleSubmit]);
 
   const handleStartExam = () => {
     const allQuestions: Question[] = [
@@ -73,15 +82,6 @@ export default function MockExamPage() {
   const handleGoToQuestion = (index: number) => {
     if (!quizState) return;
     setQuizState({ ...quizState, currentIndex: index });
-  };
-
-  const handleSubmit = () => {
-    if (!quizState) return;
-    const updatedState = submitQuiz(quizState);
-    setQuizState(updatedState);
-    
-    localStorage.setItem("quizState", JSON.stringify(updatedState));
-    router.push("/results");
   };
 
   const formatTime = (ms: number) => {
@@ -158,7 +158,6 @@ export default function MockExamPage() {
 
   const currentQuestion = quizState.questions[quizState.currentIndex];
   const progress = getProgress(quizState);
-  const isComplete = isQuizComplete(quizState);
   const timeWarning = timeRemaining < 10 * 60 * 1000;
 
   return (

@@ -12,15 +12,19 @@ export default function ResultsPage() {
   const [quizState, setQuizState] = useState<QuizState | null>(null);
 
   useEffect(() => {
-    const savedState = localStorage.getItem("quizState");
-    if (savedState) {
-      const state: QuizState = JSON.parse(savedState);
-      setQuizState(state);
-      const calculatedResult = calculateQuizResult(state);
-      setResult(calculatedResult);
-    } else {
-      router.push("/quiz");
-    }
+    const loadResults = () => {
+      const savedState = localStorage.getItem("quizState");
+      if (savedState) {
+        const state: QuizState = JSON.parse(savedState);
+        setQuizState(state);
+        const calculatedResult = calculateQuizResult(state);
+        setResult(calculatedResult);
+      } else {
+        router.push("/quiz");
+      }
+    };
+    
+    loadResults();
   }, [router]);
 
   const handleRetake = () => {
