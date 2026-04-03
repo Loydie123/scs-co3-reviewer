@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { ReviewerSection } from "@/types";
 
 interface TopicSectionProps {
@@ -9,9 +9,22 @@ interface TopicSectionProps {
 
 export function TopicSection({ section }: TopicSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isExpanded && sectionRef.current) {
+      setTimeout(() => {
+        sectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
+        });
+      }, 200);
+    }
+  }, [isExpanded]);
 
   return (
-    <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
+    <div ref={sectionRef} className="border border-slate-200 rounded-xl overflow-hidden bg-white scroll-mt-20">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
