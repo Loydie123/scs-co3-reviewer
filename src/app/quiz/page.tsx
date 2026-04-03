@@ -20,16 +20,27 @@ export default function QuizPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const savedState = localStorage.getItem("quizInProgress");
-    if (savedState) {
-      try {
-        const state: QuizState = JSON.parse(savedState);
-        setQuizState(state);
-      } catch (e) {
-        localStorage.removeItem("quizInProgress");
+    const loadSavedQuiz = () => {
+      const savedState = localStorage.getItem("quizInProgress");
+      if (savedState) {
+        try {
+          const state: QuizState = JSON.parse(savedState);
+          return state;
+        } catch {
+          localStorage.removeItem("quizInProgress");
+        }
       }
-    }
-    setIsLoading(false);
+      return null;
+    };
+
+    const saved = loadSavedQuiz();
+    
+    Promise.resolve().then(() => {
+      if (saved) {
+        setQuizState(saved);
+      }
+      setIsLoading(false);
+    });
   }, []);
 
   useEffect(() => {
