@@ -16,15 +16,21 @@ import type { DomainId, QuizState, Question } from "@/types";
 
 export default function QuizPage() {
   const router = useRouter();
-  const [quizState, setQuizState] = useState<QuizState | null>(() => {
-    if (typeof window !== "undefined") {
-      const savedState = localStorage.getItem("quizInProgress");
-      if (savedState) {
-        return JSON.parse(savedState);
+  const [quizState, setQuizState] = useState<QuizState | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const savedState = localStorage.getItem("quizInProgress");
+    if (savedState) {
+      try {
+        const state: QuizState = JSON.parse(savedState);
+        setQuizState(state);
+      } catch (e) {
+        localStorage.removeItem("quizInProgress");
       }
     }
-    return null;
-  });
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     if (quizState && !quizState.isSubmitted) {
@@ -102,7 +108,20 @@ export default function QuizPage() {
     setQuizState(null);
   };
 
-  const hasSavedProgress = typeof window !== "undefined" && localStorage.getItem("quizInProgress");
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <main className="container mx-auto px-6 py-12">
+          <div className="text-center">
+            <p className="text-slate-600">Loading...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  const hasSavedProgress = quizState !== null;
 
   if (!quizState) {
     return (
