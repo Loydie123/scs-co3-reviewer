@@ -1,0 +1,67 @@
+[
+  {
+    "id": "d4-q1",
+    "domain": "iam",
+    "question": "In IAM policy evaluation, what happens when there is both an explicit allow and an explicit deny for the same action?",
+    "choices": [
+      "Explicit deny always wins",
+      "Explicit allow always wins",
+      "The most recent policy takes precedence",
+      "The policy with the highest priority wins"
+    ],
+    "answer": "Explicit deny always wins",
+    "explanation": "In IAM policy evaluation logic, an explicit deny always overrides any explicit allows. This is a fundamental security principle in AWS."
+  },
+  {
+    "id": "d4-q2",
+    "domain": "iam",
+    "question": "What is the purpose of an IAM permission boundary?",
+    "choices": [
+      "To set the maximum permissions an IAM entity can have",
+      "To grant additional permissions to an IAM entity",
+      "To encrypt IAM credentials",
+      "To enable MFA for an IAM user"
+    ],
+    "answer": "To set the maximum permissions an IAM entity can have",
+    "explanation": "Permission boundaries define the maximum permissions that an identity-based policy can grant to an IAM entity. They don't grant permissions themselves, they limit them."
+  },
+  {
+    "id": "d4-q3",
+    "domain": "iam",
+    "question": "A company wants to allow a third-party vendor to access their AWS account. What should they use to prevent the confused deputy problem?",
+    "choices": [
+      "External ID in the role's trust policy",
+      "MFA requirement",
+      "IP address restrictions",
+      "Resource-based policy"
+    ],
+    "answer": "External ID in the role's trust policy",
+    "explanation": "External ID is a unique identifier that the third party must provide when assuming the role. This prevents the confused deputy problem where an attacker tricks the third party into accessing the wrong account."
+  },
+  {
+    "id": "d4-q4",
+    "domain": "iam",
+    "question": "Which IAM feature can identify resources in your account that are shared with external entities?",
+    "choices": [
+      "IAM Access Analyzer",
+      "IAM Policy Simulator",
+      "IAM Credential Report",
+      "AWS Config"
+    ],
+    "answer": "IAM Access Analyzer",
+    "explanation": "IAM Access Analyzer uses automated reasoning to analyze resource-based policies and identify resources that are accessible from outside your AWS account or organization."
+  },
+  {
+    "id": "d4-q5",
+    "domain": "iam",
+    "question": "Do Service Control Policies (SCPs) affect the AWS account root user?",
+    "choices": [
+      "Yes, SCPs affect all principals including root",
+      "No, root user is exempt from SCPs",
+      "Only if explicitly specified in the SCP",
+      "SCPs only affect IAM users, not root"
+    ],
+    "answer": "Yes, SCPs affect all principals including root",
+    "explanation": "SCPs affect all users and roles in an account, including the root user. This is one of the few controls that can restrict root user permissions."
+  }
+]

@@ -1,0 +1,67 @@
+[
+  {
+    "id": "d6-q1",
+    "domain": "governance",
+    "question": "Which AWS service automates the setup of a secure, multi-account AWS environment based on best practices?",
+    "choices": [
+      "AWS Control Tower",
+      "AWS Organizations",
+      "AWS Config",
+      "AWS CloudFormation"
+    ],
+    "answer": "AWS Control Tower",
+    "explanation": "AWS Control Tower automates the setup of a landing zone, which is a secure, multi-account AWS environment based on AWS best practices. It includes pre-configured guardrails and account provisioning."
+  },
+  {
+    "id": "d6-q2",
+    "domain": "governance",
+    "question": "What is the difference between preventive and detective guardrails in AWS?",
+    "choices": [
+      "Preventive guardrails block actions, detective guardrails alert on violations",
+      "Preventive guardrails alert on violations, detective guardrails block actions",
+      "They are the same thing with different names",
+      "Preventive guardrails are optional, detective guardrails are mandatory"
+    ],
+    "answer": "Preventive guardrails block actions, detective guardrails alert on violations",
+    "explanation": "Preventive guardrails (like SCPs) prevent non-compliant actions from happening, while detective guardrails (like Config Rules) detect and alert on violations after they occur."
+  },
+  {
+    "id": "d6-q3",
+    "domain": "governance",
+    "question": "Which AWS service continuously monitors and records AWS resource configurations and evaluates them against desired configurations?",
+    "choices": [
+      "AWS Config",
+      "AWS CloudTrail",
+      "Amazon CloudWatch",
+      "AWS Systems Manager"
+    ],
+    "answer": "AWS Config",
+    "explanation": "AWS Config continuously monitors and records resource configurations, evaluates them against Config Rules, and provides configuration history and change notifications."
+  },
+  {
+    "id": "d6-q4",
+    "domain": "governance",
+    "question": "What is an AWS Config conformance pack?",
+    "choices": [
+      "A collection of Config Rules and remediation actions for a compliance framework",
+      "A backup of Config Rules",
+      "A template for creating new Config Rules",
+      "A report of compliance status"
+    ],
+    "answer": "A collection of Config Rules and remediation actions for a compliance framework",
+    "explanation": "Conformance packs bundle multiple Config Rules and remediation actions that align with compliance frameworks like PCI-DSS, HIPAA, or CIS benchmarks."
+  },
+  {
+    "id": "d6-q5",
+    "domain": "governance",
+    "question": "Which AWS service helps automate evidence collection for compliance audits?",
+    "choices": [
+      "AWS Audit Manager",
+      "AWS Config",
+      "AWS CloudTrail",
+      "AWS Security Hub"
+    ],
+    "answer": "AWS Audit Manager",
+    "explanation": "AWS Audit Manager automates evidence collection from AWS services to simplify audit preparation and reduce manual effort for compliance audits."
+  }
+]

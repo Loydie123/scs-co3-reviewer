@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import { Navbar, DomainCard, QuestionCard, QuizProgress } from "@/components";
 import { domains } from "@/data/domains";
 import detectionQuiz from "@/data/quizzes/detection.json";
+import incidentResponseQuiz from "@/data/quizzes/incident-response.json";
+import infrastructureSecurityQuiz from "@/data/quizzes/infrastructure-security.json";
+import iamQuiz from "@/data/quizzes/iam.json";
+import dataProtectionQuiz from "@/data/quizzes/data-protection.json";
+import governanceQuiz from "@/data/quizzes/governance.json";
 import { initializeQuiz, shuffleQuestions, answerQuestion, nextQuestion, previousQuestion, submitQuiz, isQuizComplete, getProgress } from "@/lib";
 import type { DomainId, QuizState, Question } from "@/types";
 
@@ -16,9 +21,16 @@ export default function QuizPage() {
   const handleStartQuiz = (domainId: DomainId) => {
     let questions: Question[] = [];
 
-    if (domainId === "detection") {
-      questions = detectionQuiz as Question[];
-    }
+    const quizMap: Record<DomainId, Question[]> = {
+      detection: detectionQuiz as Question[],
+      "incident-response": incidentResponseQuiz as Question[],
+      "infrastructure-security": infrastructureSecurityQuiz as Question[],
+      iam: iamQuiz as Question[],
+      "data-protection": dataProtectionQuiz as Question[],
+      governance: governanceQuiz as Question[],
+    };
+
+    questions = quizMap[domainId] || [];
 
     if (questions.length > 0) {
       const shuffled = shuffleQuestions(questions);

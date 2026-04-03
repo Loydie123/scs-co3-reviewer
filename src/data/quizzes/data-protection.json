@@ -1,0 +1,67 @@
+[
+  {
+    "id": "d5-q1",
+    "domain": "data-protection",
+    "question": "What is the PRIMARY benefit of using envelope encryption with AWS KMS?",
+    "choices": [
+      "Reduces network load by encrypting data locally with data keys",
+      "Provides faster encryption than direct KMS encryption",
+      "Eliminates the need for key rotation",
+      "Allows encryption without using KMS"
+    ],
+    "answer": "Reduces network load by encrypting data locally with data keys",
+    "explanation": "Envelope encryption uses data keys to encrypt data locally, reducing the amount of data sent to KMS. Only the data key needs to be encrypted/decrypted by KMS, not the entire dataset."
+  },
+  {
+    "id": "d5-q2",
+    "domain": "data-protection",
+    "question": "Which S3 encryption option provides an audit trail of key usage in CloudTrail?",
+    "choices": [
+      "SSE-KMS",
+      "SSE-S3",
+      "SSE-C",
+      "Client-side encryption"
+    ],
+    "answer": "SSE-KMS",
+    "explanation": "SSE-KMS (Server-Side Encryption with KMS) logs all key usage in CloudTrail, providing an audit trail of when keys were used to encrypt or decrypt objects."
+  },
+  {
+    "id": "d5-q3",
+    "domain": "data-protection",
+    "question": "A company needs to automatically rotate database credentials every 30 days. Which AWS service should they use?",
+    "choices": [
+      "AWS Secrets Manager",
+      "AWS Systems Manager Parameter Store",
+      "AWS KMS",
+      "AWS IAM"
+    ],
+    "answer": "AWS Secrets Manager",
+    "explanation": "AWS Secrets Manager provides automatic rotation of secrets on a configurable schedule and has native integration with RDS, Redshift, and DocumentDB for rotating database credentials."
+  },
+  {
+    "id": "d5-q4",
+    "domain": "data-protection",
+    "question": "What is the difference between AWS managed keys and customer managed keys in KMS?",
+    "choices": [
+      "Customer managed keys provide full control over key policies and rotation",
+      "AWS managed keys are more secure than customer managed keys",
+      "Customer managed keys cannot be rotated",
+      "AWS managed keys can be used across regions"
+    ],
+    "answer": "Customer managed keys provide full control over key policies and rotation",
+    "explanation": "Customer managed keys (CMKs) give you full control over key policies, rotation schedules, and key usage. AWS managed keys are created and managed by AWS services with limited control."
+  },
+  {
+    "id": "d5-q5",
+    "domain": "data-protection",
+    "question": "Which AWS service provides free SSL/TLS certificates with automatic renewal?",
+    "choices": [
+      "AWS Certificate Manager (ACM)",
+      "AWS KMS",
+      "AWS Secrets Manager",
+      "AWS CloudHSM"
+    ],
+    "answer": "AWS Certificate Manager (ACM)",
+    "explanation": "ACM provides free public SSL/TLS certificates for use with AWS services like CloudFront, ALB, and API Gateway, with automatic renewal to prevent expiration."
+  }
+]

@@ -4,6 +4,11 @@ import { useState } from "react";
 import { Navbar, DomainCard, TopicSection } from "@/components";
 import { domains } from "@/data/domains";
 import { detectionContent } from "@/data/reviewer/detection";
+import { incidentResponseContent } from "@/data/reviewer/incident-response";
+import { infrastructureSecurityContent } from "@/data/reviewer/infrastructure-security";
+import { iamContent } from "@/data/reviewer/iam";
+import { dataProtectionContent } from "@/data/reviewer/data-protection";
+import { governanceContent } from "@/data/reviewer/governance";
 import type { DomainId } from "@/types";
 
 export default function ReviewerPage() {
@@ -11,6 +16,11 @@ export default function ReviewerPage() {
 
   const reviewerContentMap: Partial<Record<DomainId, typeof detectionContent>> = {
     detection: detectionContent,
+    "incident-response": incidentResponseContent,
+    "infrastructure-security": infrastructureSecurityContent,
+    iam: iamContent,
+    "data-protection": dataProtectionContent,
+    governance: governanceContent,
   };
 
   const currentContent = selectedDomain ? reviewerContentMap[selectedDomain] : null;

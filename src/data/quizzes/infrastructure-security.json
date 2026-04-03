@@ -1,0 +1,67 @@
+[
+  {
+    "id": "d3-q1",
+    "domain": "infrastructure-security",
+    "question": "What is the PRIMARY difference between Security Groups and Network ACLs?",
+    "choices": [
+      "Security Groups are stateful, NACLs are stateless",
+      "Security Groups are stateless, NACLs are stateful",
+      "Security Groups support deny rules, NACLs do not",
+      "Security Groups apply at the VPC level, NACLs at the instance level"
+    ],
+    "answer": "Security Groups are stateful, NACLs are stateless",
+    "explanation": "Security groups are stateful (return traffic is automatically allowed), while NACLs are stateless (return traffic must be explicitly allowed with rules)."
+  },
+  {
+    "id": "d3-q2",
+    "domain": "infrastructure-security",
+    "question": "A company wants to protect their web application from SQL injection and XSS attacks. Which AWS service should they use?",
+    "choices": [
+      "AWS WAF",
+      "AWS Shield",
+      "Security Groups",
+      "Network ACLs"
+    ],
+    "answer": "AWS WAF",
+    "explanation": "AWS WAF (Web Application Firewall) protects against common web exploits like SQL injection and cross-site scripting (XSS) by filtering HTTP/HTTPS requests."
+  },
+  {
+    "id": "d3-q3",
+    "domain": "infrastructure-security",
+    "question": "Which AWS service provides centralized management of firewall rules across multiple AWS accounts?",
+    "choices": [
+      "AWS Firewall Manager",
+      "AWS WAF",
+      "AWS Config",
+      "AWS Organizations"
+    ],
+    "answer": "AWS Firewall Manager",
+    "explanation": "AWS Firewall Manager centrally configures and manages firewall rules across accounts and applications in AWS Organizations, including WAF, Shield Advanced, and security groups."
+  },
+  {
+    "id": "d3-q4",
+    "domain": "infrastructure-security",
+    "question": "What type of DDoS protection does AWS Shield Standard provide?",
+    "choices": [
+      "Layer 3 and Layer 4 protection",
+      "Layer 7 protection only",
+      "No protection, it's a monitoring service",
+      "Protection for on-premises resources only"
+    ],
+    "answer": "Layer 3 and Layer 4 protection",
+    "explanation": "AWS Shield Standard provides automatic protection against common layer 3 (network) and layer 4 (transport) DDoS attacks at no additional cost."
+  },
+  {
+    "id": "d3-q5",
+    "domain": "infrastructure-security",
+    "question": "A company needs stateful network traffic inspection with intrusion prevention capabilities at the VPC level. Which service should they use?",
+    "choices": [
+      "AWS Network Firewall",
+      "Security Groups",
+      "AWS WAF",
+      "VPC Flow Logs"
+    ],
+    "answer": "AWS Network Firewall",
+    "explanation": "AWS Network Firewall provides stateful network traffic filtering at the VPC level with intrusion prevention system (IPS) capabilities using Suricata-compatible rules."
+  }
+]

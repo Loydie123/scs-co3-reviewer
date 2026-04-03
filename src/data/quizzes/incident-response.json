@@ -1,0 +1,67 @@
+[
+  {
+    "id": "d2-q1",
+    "domain": "incident-response",
+    "question": "A security team needs to automatically isolate an EC2 instance when GuardDuty detects suspicious activity. Which combination of services should they use?",
+    "choices": [
+      "GuardDuty + EventBridge + Lambda",
+      "GuardDuty + SNS + CloudWatch",
+      "Security Hub + Config + Systems Manager",
+      "CloudTrail + CloudWatch Alarms + SNS"
+    ],
+    "answer": "GuardDuty + EventBridge + Lambda",
+    "explanation": "GuardDuty findings can trigger EventBridge rules, which invoke Lambda functions to automatically isolate instances by modifying security groups or moving them to isolated subnets."
+  },
+  {
+    "id": "d2-q2",
+    "domain": "incident-response",
+    "question": "During a security incident investigation, what is the BEST way to preserve forensic evidence from a compromised EC2 instance?",
+    "choices": [
+      "Create an EBS snapshot before taking any action",
+      "Immediately terminate the instance",
+      "Reboot the instance to clear memory",
+      "Run antivirus software on the instance"
+    ],
+    "answer": "Create an EBS snapshot before taking any action",
+    "explanation": "Taking an EBS snapshot preserves the disk state for forensic analysis without disrupting the evidence. This should be done before containment or remediation actions."
+  },
+  {
+    "id": "d2-q3",
+    "domain": "incident-response",
+    "question": "Which AWS service provides pre-built automation documents for common incident response tasks?",
+    "choices": [
+      "AWS Systems Manager Automation",
+      "AWS Lambda",
+      "AWS Step Functions",
+      "AWS Config"
+    ],
+    "answer": "AWS Systems Manager Automation",
+    "explanation": "Systems Manager Automation provides pre-built runbooks (automation documents) for common remediation tasks like isolating instances, revoking credentials, and collecting forensic data."
+  },
+  {
+    "id": "d2-q4",
+    "domain": "incident-response",
+    "question": "A company needs to quickly revoke all active sessions for a compromised IAM user. What should they do?",
+    "choices": [
+      "Delete the IAM user's access keys and attach an explicit deny policy",
+      "Only delete the access keys",
+      "Change the user's password",
+      "Disable the user's MFA device"
+    ],
+    "answer": "Delete the IAM user's access keys and attach an explicit deny policy",
+    "explanation": "Deleting access keys stops new API calls, but existing sessions may remain active. Attaching an explicit deny policy immediately revokes all permissions for active sessions."
+  },
+  {
+    "id": "d2-q5",
+    "domain": "incident-response",
+    "question": "What is the PRIMARY purpose of CloudTrail log file validation in incident response?",
+    "choices": [
+      "To verify that log files have not been tampered with after delivery",
+      "To compress log files for storage efficiency",
+      "To encrypt log files at rest",
+      "To automatically delete old log files"
+    ],
+    "answer": "To verify that log files have not been tampered with after delivery",
+    "explanation": "CloudTrail log file validation creates a digital signature for each log file, allowing you to verify that the logs have not been modified or deleted after CloudTrail delivered them."
+  }
+]
