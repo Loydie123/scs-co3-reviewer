@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Navbar, DomainCard, QuestionCard, QuizProgress, QuestionNavigator } from "@/components";
+import { Navbar, DomainCard, QuestionCard, QuizProgress, QuestionNavigator, ConfirmDialog } from "@/components";
 import { domains } from "@/data/domains";
 import detectionQuiz from "@/data/quizzes/detection.json";
 import incidentResponseQuiz from "@/data/quizzes/incident-response.json";
@@ -11,13 +11,14 @@ import iamQuiz from "@/data/quizzes/iam.json";
 import dataProtectionQuiz from "@/data/quizzes/data-protection.json";
 import governanceQuiz from "@/data/quizzes/governance.json";
 import mixedQuiz from "@/data/quizzes/mixed.json";
-import { initializeQuiz, shuffleQuestions, answerQuestion, nextQuestion, previousQuestion, submitQuiz, isQuizComplete, getProgress } from "@/lib";
+import { initializeQuiz, shuffleQuestions, answerQuestion, nextQuestion, previousQuestion, submitQuiz, getProgress } from "@/lib";
 import type { DomainId, QuizState, Question } from "@/types";
 
 export default function QuizPage() {
   const router = useRouter();
   const [quizState, setQuizState] = useState<QuizState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   useEffect(() => {
     const loadSavedQuiz = () => {
@@ -47,6 +48,21 @@ export default function QuizPage() {
     if (quizState && !quizState.isSubmitted) {
       localStorage.setItem("quizInProgress", JSON.stringify(quizState));
     }
+  }, [quizState]);
+
+  useEffect(() => {
+    if (!quizState || quizState.isSubmitted) return;
+
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft" && quizState.currentIndex > 0) {
+        setQuizState(previousQuestion(quizState));
+      } else if (e.key === "ArrowRight" && quizState.currentIndex < quizState.questions.length - 1) {
+        setQuizState(nextQuestion(quizState));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, [quizState]);
 
   const handleStartQuiz = (domainId: DomainId | "mixed") => {
@@ -96,13 +112,18 @@ export default function QuizPage() {
     setQuizState({ ...quizState, currentIndex: index });
   };
 
-  const handleSubmit = () => {
+  const handleSubmitClick = () => {
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmSubmit = () => {
     if (!quizState) return;
     const updatedState = submitQuiz(quizState);
     setQuizState(updatedState);
     
     localStorage.setItem("quizState", JSON.stringify(updatedState));
     localStorage.removeItem("quizInProgress");
+    setShowConfirmDialog(false);
     router.push("/results");
   };
 
@@ -124,8 +145,22 @@ export default function QuizPage() {
       <div className="min-h-screen bg-white">
         <Navbar />
         <main className="container mx-auto px-6 py-12">
-          <div className="text-center">
-            <p className="text-slate-600">Loading...</p>
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-10">
+              <div className="h-10 bg-slate-200 rounded w-64 mb-2 animate-pulse"></div>
+              <div className="h-6 bg-slate-200 rounded w-96 animate-pulse"></div>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="animate-pulse p-6 rounded-xl border border-slate-200 bg-white">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="h-5 bg-slate-200 rounded w-2/3"></div>
+                    <div className="h-5 bg-slate-200 rounded w-12"></div>
+                  </div>
+                  <div className="h-4 bg-slate-200 rounded w-full"></div>
+                </div>
+              ))}
+            </div>
           </div>
         </main>
       </div>
@@ -221,7 +256,6 @@ export default function QuizPage() {
 
   const currentQuestion = quizState.questions[quizState.currentIndex];
   const progress = getProgress(quizState);
-  const isComplete = isQuizComplete(quizState);
 
   return (
     <div className="min-h-screen bg-white">
@@ -266,9 +300,8 @@ export default function QuizPage() {
                     </button>
                   ) : (
                     <button
-                      onClick={handleSubmit}
-                      disabled={!isComplete}
-                      className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                      onClick={handleSubmitClick}
+                      className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors"
                     >
                       Submit Quiz
                     </button>
@@ -286,6 +319,17 @@ export default function QuizPage() {
           </div>
         </div>
       </main>
+
+      <ConfirmDialog
+        isOpen={showConfirmDialog}
+        title="Submit Quiz?"
+        message={`You have answered ${progress.answered} out of ${quizState.questions.length} questions. Are you sure you want to submit?`}
+        confirmText="Submit"
+        cancelText="Keep Working"
+        type="info"
+        onConfirm={handleConfirmSubmit}
+        onCancel={() => setShowConfirmDialog(false)}
+      />
     </div>
   );
 }

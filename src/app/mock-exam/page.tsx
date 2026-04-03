@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Navbar, QuestionCard, QuestionNavigator } from "@/components";
+import { Navbar, QuestionCard, QuestionNavigator, ConfirmDialog } from "@/components";
 import detectionQuiz from "@/data/quizzes/detection.json";
 import incidentResponseQuiz from "@/data/quizzes/incident-response.json";
 import infrastructureSecurityQuiz from "@/data/quizzes/infrastructure-security.json";
@@ -19,6 +19,7 @@ export default function MockExamPage() {
   const [quizState, setQuizState] = useState<QuizState | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number>(EXAM_DURATION);
   const [isStarted, setIsStarted] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleSubmit = useCallback(() => {
     if (!quizState) return;
@@ -26,8 +27,13 @@ export default function MockExamPage() {
     setQuizState(updatedState);
     
     localStorage.setItem("quizState", JSON.stringify(updatedState));
+    setShowConfirmDialog(false);
     router.push("/results");
   }, [quizState, router]);
+
+  const handleSubmitClick = () => {
+    setShowConfirmDialog(true);
+  };
 
   useEffect(() => {
     if (!isStarted || !quizState) return;
@@ -44,6 +50,21 @@ export default function MockExamPage() {
 
     return () => clearInterval(interval);
   }, [isStarted, quizState, handleSubmit]);
+
+  useEffect(() => {
+    if (!quizState || quizState.isSubmitted) return;
+
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft" && quizState.currentIndex > 0) {
+        setQuizState(previousQuestion(quizState));
+      } else if (e.key === "ArrowRight" && quizState.currentIndex < quizState.questions.length - 1) {
+        setQuizState(nextQuestion(quizState));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [quizState]);
 
   const handleStartExam = () => {
     const allQuestions: Question[] = [
@@ -83,6 +104,37 @@ export default function MockExamPage() {
     if (!quizState) return;
     setQuizState({ ...quizState, currentIndex: index });
   };
+
+  useEffect(() => {
+    if (!isStarted || !quizState) return;
+
+    const interval = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1000) {
+          handleSubmit();
+          return 0;
+        }
+        return prev - 1000;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isStarted, quizState, handleSubmit]);
+
+  useEffect(() => {
+    if (!quizState || quizState.isSubmitted) return;
+
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft" && quizState.currentIndex > 0) {
+        setQuizState(previousQuestion(quizState));
+      } else if (e.key === "ArrowRight" && quizState.currentIndex < quizState.questions.length - 1) {
+        setQuizState(nextQuestion(quizState));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [quizState]);
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -167,8 +219,14 @@ export default function MockExamPage() {
       <div className="sticky top-16 z-40 bg-white border-b border-slate-200 py-4">
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between max-w-5xl mx-auto">
-            <div className="text-sm text-slate-600">
-              Mock Exam • {progress.answered}/{quizState.questions.length} answered
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-slate-600">
+                Mock Exam • {progress.answered}/{quizState.questions.length} answered
+              </div>
+              <div className="hidden md:flex items-center gap-2 text-xs text-slate-400">
+                <kbd className="px-2 py-1 bg-slate-100 border border-slate-300 rounded text-slate-600">←</kbd>
+                <kbd className="px-2 py-1 bg-slate-100 border border-slate-300 rounded text-slate-600">→</kbd>
+              </div>
             </div>
             <div className={`text-lg font-mono font-semibold ${
               timeWarning ? "text-red-600" : "text-slate-900"
@@ -212,7 +270,7 @@ export default function MockExamPage() {
                     </button>
                   ) : (
                     <button
-                      onClick={handleSubmit}
+                      onClick={handleSubmitClick}
                       className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors"
                     >
                       Submit Exam
@@ -231,6 +289,17 @@ export default function MockExamPage() {
           </div>
         </div>
       </main>
+
+      <ConfirmDialog
+        isOpen={showConfirmDialog}
+        title="Submit Mock Exam?"
+        message={`You have answered ${progress.answered} out of ${quizState.questions.length} questions. Time remaining: ${formatTime(timeRemaining)}. Are you sure you want to submit?`}
+        confirmText="Submit Exam"
+        cancelText="Continue"
+        type="warning"
+        onConfirm={handleSubmit}
+        onCancel={() => setShowConfirmDialog(false)}
+      />
     </div>
   );
 }

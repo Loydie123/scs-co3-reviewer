@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { domains } from "@/data/domains";
+import { Footer, StatsCard } from "@/components";
 
 export default function Home() {
   return (
@@ -86,6 +87,18 @@ export default function Home() {
             </Link>
           </div>
 
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold text-slate-900 mb-6">
+              What You&apos;ll Get
+            </h2>
+            <div className="grid md:grid-cols-4 gap-4">
+              <StatsCard icon="📚" label="Study Materials" value="6 Domains" color="blue" />
+              <StatsCard icon="❓" label="Practice Questions" value="120+" color="green" />
+              <StatsCard icon="🎯" label="Mock Exam" value="65 Qs" color="orange" />
+              <StatsCard icon="⏱️" label="Exam Timer" value="170 min" color="purple" />
+            </div>
+          </div>
+
           <div className="mb-8">
             <h2 className="text-2xl font-semibold text-slate-900 mb-6">
               Exam Domains
@@ -112,13 +125,9 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="text-center">
-            <p className="text-sm text-slate-500">
-              Unofficial study tool • Not affiliated with AWS
-            </p>
-          </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Navbar, DomainCard, TopicSection } from "@/components";
+import { Navbar, DomainCard, TopicSection, ScrollToTop } from "@/components";
 import { domains } from "@/data/domains";
 import { detectionContent } from "@/data/reviewer/detection";
 import { incidentResponseContent } from "@/data/reviewer/incident-response";
@@ -90,6 +90,7 @@ export default function ReviewerPage() {
           )}
         </div>
       </main>
+      <ScrollToTop />
     </div>
   );
 }

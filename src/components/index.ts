@@ -1,9 +1,16 @@
 export { Navbar } from "./navbar";
+export { Footer } from "./footer";
 export { DomainCard } from "./domain-card";
 export { TopicSection } from "./topic-section";
 export { QuestionCard } from "./question-card";
 export { QuizProgress } from "./quiz-progress";
 export { QuestionNavigator } from "./question-navigator";
 export { DifficultyBadge } from "./difficulty-badge";
+export { LoadingSkeleton, DomainCardSkeleton } from "./loading-skeleton";
+export { Confetti } from "./confetti";
+export { ScrollToTop } from "./scroll-to-top";
+export { StatsCard } from "./stats-card";
+export { Toast } from "./toast";
+export { ConfirmDialog } from "./confirm-dialog";
 export { ResultSummary } from "./result-summary";
 export { ScoreBreakdown } from "./score-breakdown";

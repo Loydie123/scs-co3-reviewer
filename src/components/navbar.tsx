@@ -41,6 +41,12 @@ export function Navbar() {
             >
               Mock Exam
             </Link>
+            <Link
+              href="/about"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+            >
+              About
+            </Link>
           </div>
 
           <button
@@ -88,6 +94,13 @@ export function Navbar() {
                 className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 Mock Exam
+              </Link>
+              <Link
+                href="/about"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+              >
+                About
               </Link>
             </div>
           </div>
