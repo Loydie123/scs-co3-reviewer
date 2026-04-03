@@ -20,8 +20,8 @@ export function QuestionCard({
   const isCorrect = selectedAnswer === question.answer;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6">
-      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-6">
+    <div className="bg-white border border-slate-200 rounded-xl p-8">
+      <h3 className="text-lg font-medium text-slate-900 mb-6 leading-relaxed">
         {question.question}
       </h3>
 
@@ -30,19 +30,22 @@ export function QuestionCard({
           const isSelected = selectedAnswer === choice;
           const isCorrectAnswer = choice === question.answer;
           
-          let bgClass = "bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600";
-          let borderClass = "border-slate-200 dark:border-slate-600";
+          let bgClass = "bg-slate-50";
+          let borderClass = "border-slate-200";
+          let hoverClass = "hover:bg-slate-100";
           
           if (isSubmitted && showResult) {
             if (isCorrectAnswer) {
-              bgClass = "bg-green-50 dark:bg-green-900/20";
-              borderClass = "border-green-500";
+              bgClass = "bg-emerald-50";
+              borderClass = "border-emerald-500";
+              hoverClass = "";
             } else if (isSelected && !isCorrect) {
-              bgClass = "bg-red-50 dark:bg-red-900/20";
+              bgClass = "bg-red-50";
               borderClass = "border-red-500";
+              hoverClass = "";
             }
           } else if (isSelected) {
-            bgClass = "bg-blue-50 dark:bg-blue-900/20";
+            bgClass = "bg-blue-50";
             borderClass = "border-blue-500";
           }
 
@@ -51,15 +54,15 @@ export function QuestionCard({
               key={index}
               onClick={() => !isSubmitted && onSelectAnswer(choice)}
               disabled={isSubmitted}
-              className={`w-full text-left p-4 rounded-lg border-2 transition-all ${bgClass} ${borderClass} ${
+              className={`w-full text-left p-4 rounded-lg border transition-all ${bgClass} ${borderClass} ${hoverClass} ${
                 isSubmitted ? "cursor-not-allowed" : "cursor-pointer"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-sm font-medium">
+              <div className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-white border border-slate-300 flex items-center justify-center text-xs font-semibold text-slate-700">
                   {String.fromCharCode(65 + index)}
                 </span>
-                <span className="text-slate-900 dark:text-slate-50">{choice}</span>
+                <span className="text-sm text-slate-900 pt-0.5">{choice}</span>
               </div>
             </button>
           );
@@ -67,12 +70,12 @@ export function QuestionCard({
       </div>
 
       {isSubmitted && showResult && (
-        <div className={`mt-6 p-4 rounded-lg ${isCorrect ? "bg-green-50 dark:bg-green-900/20" : "bg-red-50 dark:bg-red-900/20"}`}>
-          <p className={`font-semibold mb-2 ${isCorrect ? "text-green-900 dark:text-green-300" : "text-red-900 dark:text-red-300"}`}>
-            {isCorrect ? "✓ Correct!" : "✗ Incorrect"}
+        <div className={`mt-6 p-5 rounded-xl border ${isCorrect ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"}`}>
+          <p className={`text-sm font-semibold mb-2 ${isCorrect ? "text-emerald-700" : "text-red-700"}`}>
+            {isCorrect ? "✓ Correct" : "✗ Incorrect"}
           </p>
-          <p className="text-sm text-slate-700 dark:text-slate-300">
-            <strong>Explanation:</strong> {question.explanation}
+          <p className="text-sm text-slate-700 leading-relaxed">
+            {question.explanation}
           </p>
         </div>
       )}

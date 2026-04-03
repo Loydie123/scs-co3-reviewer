@@ -1,6 +1,6 @@
 import type { DomainPerformance } from "@/types";
 import { domains } from "@/data/domains";
-import { formatPercentage, getDomainTextClass } from "@/lib";
+import { formatPercentage } from "@/lib";
 
 interface ScoreBreakdownProps {
   domainBreakdown: DomainPerformance[];
@@ -8,12 +8,12 @@ interface ScoreBreakdownProps {
 
 export function ScoreBreakdown({ domainBreakdown }: ScoreBreakdownProps) {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6">
-      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-4">
+    <div className="bg-white border border-slate-200 rounded-xl p-6">
+      <h3 className="text-lg font-semibold text-slate-900 mb-5">
         Performance by Domain
       </h3>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         {domainBreakdown.map((performance) => {
           const domain = domains.find((d) => d.id === performance.domain);
           if (!domain) return null;
@@ -21,21 +21,21 @@ export function ScoreBreakdown({ domainBreakdown }: ScoreBreakdownProps) {
           return (
             <div key={performance.domain} className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className={`font-medium ${getDomainTextClass(domain.id)}`}>
+                <span className="text-sm font-medium text-slate-900">
                   {domain.name}
                 </span>
-                <span className="text-sm text-slate-600 dark:text-slate-400">
-                  {performance.correct}/{performance.total} ({formatPercentage(performance.percentage)})
+                <span className="text-xs text-slate-500 font-medium">
+                  {performance.correct}/{performance.total} • {formatPercentage(performance.percentage)}
                 </span>
               </div>
-              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+              <div className="w-full bg-slate-100 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full transition-all ${
                     performance.percentage >= 80
-                      ? "bg-green-600"
+                      ? "bg-emerald-500"
                       : performance.percentage >= 60
-                      ? "bg-yellow-600"
-                      : "bg-red-600"
+                      ? "bg-amber-500"
+                      : "bg-red-500"
                   }`}
                   style={{ width: `${performance.percentage}%` }}
                 />
