@@ -1,11 +1,3 @@
-export interface Domain {
-  id: string;
-  name: string;
-  slug: string;
-  weight: number;
-  description: string;
-}
-
 export const DOMAIN_IDS = {
   DETECTION: "detection",
   INCIDENT_RESPONSE: "incident-response",
@@ -16,3 +8,11 @@ export const DOMAIN_IDS = {
 } as const;
 
 export type DomainId = typeof DOMAIN_IDS[keyof typeof DOMAIN_IDS];
+
+export interface Domain {
+  id: DomainId;
+  name: string;
+  slug: string;
+  weight: number;
+  description: string;
+}
