@@ -2,6 +2,8 @@
   {
     "id": "d6-q1",
     "domain": "governance",
+    "type": "single",
+    "difficulty": "easy",
     "question": "Which AWS service automates the setup of a secure, multi-account AWS environment based on best practices?",
     "choices": [
       "AWS Control Tower",
@@ -15,6 +17,8 @@
   {
     "id": "d6-q2",
     "domain": "governance",
+    "type": "single",
+    "difficulty": "medium",
     "question": "What is the difference between preventive and detective guardrails in AWS?",
     "choices": [
       "Preventive guardrails block actions, detective guardrails alert on violations",
@@ -28,6 +32,8 @@
   {
     "id": "d6-q3",
     "domain": "governance",
+    "type": "single",
+    "difficulty": "easy",
     "question": "Which AWS service continuously monitors and records AWS resource configurations and evaluates them against desired configurations?",
     "choices": [
       "AWS Config",
@@ -41,6 +47,8 @@
   {
     "id": "d6-q4",
     "domain": "governance",
+    "type": "single",
+    "difficulty": "medium",
     "question": "What is an AWS Config conformance pack?",
     "choices": [
       "A collection of Config Rules and remediation actions for a compliance framework",
@@ -54,6 +62,8 @@
   {
     "id": "d6-q5",
     "domain": "governance",
+    "type": "single",
+    "difficulty": "medium",
     "question": "Which AWS service helps automate evidence collection for compliance audits?",
     "choices": [
       "AWS Audit Manager",
@@ -63,5 +73,232 @@
     ],
     "answer": "AWS Audit Manager",
     "explanation": "AWS Audit Manager automates evidence collection from AWS services to simplify audit preparation and reduce manual effort for compliance audits."
+  },
+  {
+    "id": "d6-q6",
+    "domain": "governance",
+    "type": "multiple",
+    "difficulty": "medium",
+    "question": "Which of the following are types of guardrails in AWS Control Tower? (Select all that apply)",
+    "choices": [
+      "Mandatory",
+      "Strongly recommended",
+      "Elective",
+      "Optional",
+      "Emergency"
+    ],
+    "answer": ["Mandatory", "Strongly recommended", "Elective"],
+    "explanation": "Control Tower guardrails are categorized as mandatory (always enforced), strongly recommended (AWS best practices), and elective (optional based on requirements)."
+  },
+  {
+    "id": "d6-q7",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company wants to prevent any account in their organization from disabling AWS Config. What should they implement?",
+    "choices": [
+      "Create an SCP that denies config:StopConfigurationRecorder",
+      "Use AWS Config to detect when it's disabled",
+      "Enable Control Tower mandatory guardrails",
+      "Config cannot be protected from disabling"
+    ],
+    "answer": "Create an SCP that denies config:StopConfigurationRecorder",
+    "explanation": "An SCP with an explicit deny for config:StopConfigurationRecorder prevents all principals in member accounts from disabling Config, enforcing continuous compliance monitoring."
+  },
+  {
+    "id": "d6-q8",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "What is the difference between AWS Config and AWS CloudTrail?",
+    "choices": [
+      "Config tracks resource configurations, CloudTrail tracks API activity",
+      "Config tracks API activity, CloudTrail tracks configurations",
+      "They are the same service",
+      "Config is for security, CloudTrail is for billing"
+    ],
+    "answer": "Config tracks resource configurations, CloudTrail tracks API activity",
+    "explanation": "AWS Config records resource configurations and configuration changes (what resources look like), while CloudTrail records API calls and events (who did what and when)."
+  },
+  {
+    "id": "d6-q9",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company has 50 AWS accounts and wants to aggregate Config data from all accounts into a single account for centralized compliance reporting. What should they configure?",
+    "choices": [
+      "AWS Config aggregator in a central account with authorization from member accounts",
+      "CloudTrail organization trail",
+      "Security Hub in each account",
+      "Config data cannot be aggregated"
+    ],
+    "answer": "AWS Config aggregator in a central account with authorization from member accounts",
+    "explanation": "Config aggregators collect configuration and compliance data from multiple accounts and regions into a single account for centralized viewing and reporting."
+  },
+  {
+    "id": "d6-q10",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "Which AWS service provides a repository of compliance reports and certifications?",
+    "choices": [
+      "AWS Artifact",
+      "AWS Audit Manager",
+      "AWS Config",
+      "AWS Security Hub"
+    ],
+    "answer": "AWS Artifact",
+    "explanation": "AWS Artifact is a self-service portal for on-demand access to AWS compliance reports, certifications, and agreements like SOC reports, PCI attestations, and ISO certifications."
+  },
+  {
+    "id": "d6-q11",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "easy",
+    "question": "What is the purpose of AWS Organizations?",
+    "choices": [
+      "Centrally manage and govern multiple AWS accounts",
+      "Monitor security threats",
+      "Encrypt data at rest",
+      "Manage IAM users"
+    ],
+    "answer": "Centrally manage and govern multiple AWS accounts",
+    "explanation": "AWS Organizations enables centralized management of multiple AWS accounts, including consolidated billing, account grouping with OUs, and policy-based governance with SCPs."
+  },
+  {
+    "id": "d6-q12",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company wants to automatically remediate non-compliant resources detected by AWS Config. What is the BEST approach?",
+    "choices": [
+      "Use AWS Config remediation actions with Systems Manager Automation documents",
+      "Manually fix each non-compliant resource",
+      "Use Lambda functions triggered by CloudWatch",
+      "Config cannot trigger remediation"
+    ],
+    "answer": "Use AWS Config remediation actions with Systems Manager Automation documents",
+    "explanation": "AWS Config supports automatic remediation using Systems Manager Automation documents. When a resource becomes non-compliant, Config can automatically trigger remediation actions."
+  },
+  {
+    "id": "d6-q13",
+    "domain": "governance",
+    "type": "multiple",
+    "difficulty": "medium",
+    "question": "Which of the following are benefits of using AWS Organizations? (Select all that apply)",
+    "choices": [
+      "Consolidated billing across all accounts",
+      "Centralized policy management with SCPs",
+      "Automated account provisioning",
+      "Free AWS support for all accounts",
+      "Automatic resource encryption"
+    ],
+    "answer": ["Consolidated billing across all accounts", "Centralized policy management with SCPs", "Automated account provisioning"],
+    "explanation": "Organizations provides consolidated billing, SCP-based governance, and can automate account creation. It doesn't provide free support or automatic encryption."
+  },
+  {
+    "id": "d6-q14",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company has a Control Tower landing zone. A developer manually creates a new AWS account outside of Account Factory. What is the impact?",
+    "choices": [
+      "The account will not have Control Tower guardrails applied automatically",
+      "The account will be automatically enrolled in Control Tower",
+      "Control Tower will delete the account",
+      "No impact, all accounts are automatically governed"
+    ],
+    "answer": "The account will not have Control Tower guardrails applied automatically",
+    "explanation": "Accounts created outside of Control Tower's Account Factory are not automatically enrolled or governed by Control Tower guardrails. They must be manually enrolled or registered."
+  },
+  {
+    "id": "d6-q15",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "What is the relationship between AWS Organizations and Service Control Policies (SCPs)?",
+    "choices": [
+      "SCPs are a feature of Organizations used to set permission guardrails",
+      "They are separate unrelated services",
+      "SCPs replace Organizations",
+      "Organizations is a feature of SCPs"
+    ],
+    "answer": "SCPs are a feature of Organizations used to set permission guardrails",
+    "explanation": "SCPs are a type of organization policy in AWS Organizations that define maximum available permissions for accounts in the organization, acting as permission guardrails."
+  },
+  {
+    "id": "d6-q16",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A security team needs to ensure that all EC2 instances in the organization have encryption enabled on their EBS volumes. What is the MOST scalable solution?",
+    "choices": [
+      "Use an SCP to deny RunInstances without encrypted volumes, plus Config rule to detect existing non-compliant instances",
+      "Manually check each instance",
+      "Use only AWS Config",
+      "Use only an SCP"
+    ],
+    "answer": "Use an SCP to deny RunInstances without encrypted volumes, plus Config rule to detect existing non-compliant instances",
+    "explanation": "Combining preventive (SCP to block new non-compliant instances) and detective (Config rule to find existing violations) controls provides comprehensive coverage for both new and existing resources."
+  },
+  {
+    "id": "d6-q17",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "Can AWS Config automatically remediate non-compliant resources?",
+    "choices": [
+      "Yes, using Systems Manager Automation documents",
+      "No, Config only detects non-compliance",
+      "Yes, but only for S3 buckets",
+      "Yes, using Lambda functions only"
+    ],
+    "answer": "Yes, using Systems Manager Automation documents",
+    "explanation": "AWS Config supports automatic remediation through Systems Manager Automation documents, which can fix non-compliant resources automatically when violations are detected."
+  },
+  {
+    "id": "d6-q18",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company wants to enforce that all S3 buckets must have versioning enabled across all accounts in their organization. What is the MOST effective approach?",
+    "choices": [
+      "Use an SCP to deny s3:PutBucketVersioning with Disabled status, plus Config rule for detection",
+      "Use only AWS Config",
+      "Manually enable versioning on each bucket",
+      "Use S3 bucket policies"
+    ],
+    "answer": "Use an SCP to deny s3:PutBucketVersioning with Disabled status, plus Config rule for detection",
+    "explanation": "An SCP prevents disabling versioning on buckets, while a Config rule detects buckets that don't have versioning enabled. This combination provides both preventive and detective controls."
+  },
+  {
+    "id": "d6-q19",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "What is the purpose of AWS Control Tower Account Factory?",
+    "choices": [
+      "To automate the provisioning of new AWS accounts with baseline security controls",
+      "To delete unused AWS accounts",
+      "To merge multiple AWS accounts",
+      "To monitor account activity"
+    ],
+    "answer": "To automate the provisioning of new AWS accounts with baseline security controls",
+    "explanation": "Account Factory in Control Tower automates the creation of new AWS accounts with pre-configured baseline security controls, guardrails, and organizational policies."
+  },
+  {
+    "id": "d6-q20",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company uses AWS Config to monitor compliance. They notice that Config is generating high costs due to the number of configuration items recorded. What can they do to reduce costs while maintaining security?",
+    "choices": [
+      "Configure Config to record only specific resource types that are security-critical",
+      "Disable Config entirely",
+      "Config costs cannot be reduced",
+      "Delete all configuration history"
+    ],
+    "answer": "Configure Config to record only specific resource types that are security-critical",
+    "explanation": "AWS Config allows you to select which resource types to record. By focusing on security-critical resources (IAM, S3, security groups, etc.) instead of all resources, you can reduce costs while maintaining security monitoring."
   }
 ]

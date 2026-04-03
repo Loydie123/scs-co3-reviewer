@@ -2,6 +2,8 @@
   {
     "id": "d4-q1",
     "domain": "iam",
+    "type": "single",
+    "difficulty": "easy",
     "question": "In IAM policy evaluation, what happens when there is both an explicit allow and an explicit deny for the same action?",
     "choices": [
       "Explicit deny always wins",
@@ -15,6 +17,8 @@
   {
     "id": "d4-q2",
     "domain": "iam",
+    "type": "single",
+    "difficulty": "easy",
     "question": "What is the purpose of an IAM permission boundary?",
     "choices": [
       "To set the maximum permissions an IAM entity can have",
@@ -28,6 +32,8 @@
   {
     "id": "d4-q3",
     "domain": "iam",
+    "type": "single",
+    "difficulty": "medium",
     "question": "A company wants to allow a third-party vendor to access their AWS account. What should they use to prevent the confused deputy problem?",
     "choices": [
       "External ID in the role's trust policy",
@@ -41,6 +47,8 @@
   {
     "id": "d4-q4",
     "domain": "iam",
+    "type": "single",
+    "difficulty": "medium",
     "question": "Which IAM feature can identify resources in your account that are shared with external entities?",
     "choices": [
       "IAM Access Analyzer",
@@ -54,6 +62,8 @@
   {
     "id": "d4-q5",
     "domain": "iam",
+    "type": "single",
+    "difficulty": "medium",
     "question": "Do Service Control Policies (SCPs) affect the AWS account root user?",
     "choices": [
       "Yes, SCPs affect all principals including root",
@@ -63,5 +73,233 @@
     ],
     "answer": "Yes, SCPs affect all principals including root",
     "explanation": "SCPs affect all users and roles in an account, including the root user. This is one of the few controls that can restrict root user permissions."
+  },
+  {
+    "id": "d4-q6",
+    "domain": "iam",
+    "type": "multiple",
+    "difficulty": "hard",
+    "question": "What are the components of effective IAM permissions for a user with a permission boundary? (Select all that apply)",
+    "choices": [
+      "Identity-based policy attached to the user",
+      "Permission boundary attached to the user",
+      "Service Control Policy from AWS Organizations",
+      "Resource-based policy on the target resource",
+      "Session policy"
+    ],
+    "answer": ["Identity-based policy attached to the user", "Permission boundary attached to the user", "Service Control Policy from AWS Organizations"],
+    "explanation": "Effective permissions are the intersection of identity-based policies, permission boundaries, and SCPs. Resource-based policies grant additional access and are evaluated separately. Session policies further restrict temporary credentials."
+  },
+  {
+    "id": "d4-q7",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A developer needs temporary access to production resources. The access should automatically expire after 2 hours. What is the BEST solution?",
+    "choices": [
+      "Use STS AssumeRole with a 2-hour session duration",
+      "Create an IAM user and delete it after 2 hours",
+      "Use an IAM role with a time-based condition",
+      "Grant access via IAM group and remove after 2 hours"
+    ],
+    "answer": "Use STS AssumeRole with a 2-hour session duration",
+    "explanation": "STS AssumeRole provides temporary credentials with a configurable session duration (up to 12 hours). This is the proper way to grant time-limited access without manual cleanup."
+  },
+  {
+    "id": "d4-q8",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "What is the difference between an IAM role's trust policy and permission policy?",
+    "choices": [
+      "Trust policy defines who can assume the role, permission policy defines what the role can do",
+      "Trust policy defines what the role can do, permission policy defines who can assume it",
+      "They are the same thing",
+      "Trust policy is optional, permission policy is required"
+    ],
+    "answer": "Trust policy defines who can assume the role, permission policy defines what the role can do",
+    "explanation": "The trust policy (assume role policy) specifies which principals can assume the role, while the permission policy specifies what actions the role can perform on which resources."
+  },
+  {
+    "id": "d4-q9",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company wants to enforce that all IAM users must use MFA to access the AWS Console. How should they implement this?",
+    "choices": [
+      "Create an SCP or IAM policy with a Deny effect when aws:MultiFactorAuthPresent is false",
+      "Enable MFA in the AWS Console settings",
+      "Use AWS Config to detect users without MFA",
+      "MFA cannot be enforced, only recommended"
+    ],
+    "answer": "Create an SCP or IAM policy with a Deny effect when aws:MultiFactorAuthPresent is false",
+    "explanation": "You can enforce MFA by creating a policy that denies all actions except MFA management when the aws:MultiFactorAuthPresent condition is false. This can be implemented as an SCP or IAM policy."
+  },
+  {
+    "id": "d4-q10",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "Which AWS service provides centralized access management for multiple AWS accounts and applications?",
+    "choices": [
+      "AWS IAM Identity Center (formerly AWS SSO)",
+      "AWS IAM",
+      "AWS Organizations",
+      "Amazon Cognito"
+    ],
+    "answer": "AWS IAM Identity Center (formerly AWS SSO)",
+    "explanation": "IAM Identity Center provides centralized access management for multiple AWS accounts and cloud applications, with support for SAML 2.0 federation and integration with corporate identity providers."
+  },
+  {
+    "id": "d4-q11",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "easy",
+    "question": "What is the recommended way to grant permissions to an EC2 instance to access other AWS services?",
+    "choices": [
+      "Attach an IAM role to the instance",
+      "Store IAM user credentials on the instance",
+      "Use the root account credentials",
+      "Hardcode access keys in the application"
+    ],
+    "answer": "Attach an IAM role to the instance",
+    "explanation": "IAM roles provide temporary credentials to EC2 instances, eliminating the need to store long-term credentials. This is the most secure and recommended approach."
+  },
+  {
+    "id": "d4-q12",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company has a multi-account setup. They want to prevent any account from leaving the organization or disabling CloudTrail. What should they use?",
+    "choices": [
+      "Service Control Policy (SCP) with explicit deny for LeaveOrganization and StopLogging actions",
+      "IAM policy in each account",
+      "AWS Config rule",
+      "CloudTrail event notification"
+    ],
+    "answer": "Service Control Policy (SCP) with explicit deny for LeaveOrganization and StopLogging actions",
+    "explanation": "SCPs can enforce organization-wide guardrails by explicitly denying critical actions like leaving the organization or disabling CloudTrail, even for administrators and root users."
+  },
+  {
+    "id": "d4-q13",
+    "domain": "iam",
+    "type": "multiple",
+    "difficulty": "medium",
+    "question": "Which of the following are valid use cases for IAM roles? (Select all that apply)",
+    "choices": [
+      "Granting AWS service access to resources",
+      "Cross-account access",
+      "Federated user access",
+      "Long-term credential storage",
+      "EC2 instance access to AWS services"
+    ],
+    "answer": ["Granting AWS service access to resources", "Cross-account access", "Federated user access", "EC2 instance access to AWS services"],
+    "explanation": "IAM roles provide temporary credentials for services, cross-account access, federated users, and EC2 instances. They should not be used for long-term credential storage (use IAM users or secrets management instead)."
+  },
+  {
+    "id": "d4-q14",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A developer accidentally committed AWS access keys to a public GitHub repository. What should be the immediate response?",
+    "choices": [
+      "Deactivate the access keys immediately and rotate them",
+      "Change the IAM user's password",
+      "Delete the GitHub repository",
+      "Enable MFA on the IAM user"
+    ],
+    "answer": "Deactivate the access keys immediately and rotate them",
+    "explanation": "Exposed access keys should be deactivated immediately to prevent unauthorized use, then rotated. AWS also automatically detects exposed keys and may notify you or restrict the credentials."
+  },
+  {
+    "id": "d4-q15",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "What is the maximum session duration for temporary credentials obtained through AssumeRole?",
+    "choices": [
+      "12 hours",
+      "1 hour",
+      "24 hours",
+      "Unlimited"
+    ],
+    "answer": "12 hours",
+    "explanation": "The maximum session duration for temporary credentials obtained through STS AssumeRole is 12 hours. The default is 1 hour, but it can be configured up to 12 hours."
+  },
+  {
+    "id": "d4-q16",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company uses IAM Access Analyzer and receives a finding that an S3 bucket is accessible from an external account. The bucket should only be accessible internally. What is the MOST likely cause?",
+    "choices": [
+      "The S3 bucket policy grants access to the external account",
+      "The bucket is public",
+      "GuardDuty detected suspicious access",
+      "CloudTrail is misconfigured"
+    ],
+    "answer": "The S3 bucket policy grants access to the external account",
+    "explanation": "IAM Access Analyzer identifies external access by analyzing resource-based policies. If it reports external account access, the bucket policy likely contains a statement granting permissions to that account's principals."
+  },
+  {
+    "id": "d4-q17",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "Which IAM policy type takes precedence over all others?",
+    "choices": [
+      "Explicit deny in any policy",
+      "Resource-based policy",
+      "Identity-based policy",
+      "Service Control Policy"
+    ],
+    "answer": "Explicit deny in any policy",
+    "explanation": "An explicit deny in any policy (SCP, permission boundary, identity-based, or resource-based) always takes precedence and overrides any allows."
+  },
+  {
+    "id": "d4-q18",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company wants to allow developers to create IAM roles but prevent them from creating roles with more permissions than they have. What should they implement?",
+    "choices": [
+      "Require a permission boundary on all roles created by developers",
+      "Use an SCP to restrict role creation",
+      "Disable role creation for developers",
+      "Use AWS Config to detect overprivileged roles"
+    ],
+    "answer": "Require a permission boundary on all roles created by developers",
+    "explanation": "By requiring developers to attach a permission boundary to any roles they create, you can ensure that created roles cannot have more permissions than the boundary allows, preventing privilege escalation."
+  },
+  {
+    "id": "d4-q19",
+    "domain": "iam",
+    "type": "multiple",
+    "difficulty": "medium",
+    "question": "Which of the following are best practices for IAM? (Select all that apply)",
+    "choices": [
+      "Enable MFA for privileged users",
+      "Use roles for applications running on EC2",
+      "Rotate credentials regularly",
+      "Share root user credentials with the team",
+      "Grant least privilege permissions"
+    ],
+    "answer": ["Enable MFA for privileged users", "Use roles for applications running on EC2", "Rotate credentials regularly", "Grant least privilege permissions"],
+    "explanation": "IAM best practices include enabling MFA, using roles instead of credentials, rotating credentials, and following least privilege. Root credentials should never be shared."
+  },
+  {
+    "id": "d4-q20",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company has a Lambda function that needs to access resources in another AWS account. What is the MOST secure way to implement this?",
+    "choices": [
+      "Lambda assumes a cross-account role with appropriate trust policy and external ID",
+      "Store cross-account credentials in Lambda environment variables",
+      "Use the same IAM user in both accounts",
+      "Make all resources public"
+    ],
+    "answer": "Lambda assumes a cross-account role with appropriate trust policy and external ID",
+    "explanation": "The secure approach is to create a cross-account IAM role in the target account with a trust policy allowing the Lambda's execution role to assume it. Using external ID adds an additional security layer."
   }
 ]

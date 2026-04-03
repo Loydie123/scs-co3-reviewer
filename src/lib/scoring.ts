@@ -2,8 +2,16 @@ import type { Question, QuizState, QuizResult, DomainPerformance, QuestionResult
 
 export function calculateQuizResult(state: QuizState): QuizResult {
   const questionResults: QuestionResult[] = state.questions.map((question) => {
-    const userAnswer = state.answers[question.id] || "";
-    const isCorrect = userAnswer === question.answer;
+    const userAnswer = state.answers[question.id] || (question.type === "multiple" ? [] : "");
+    
+    let isCorrect = false;
+    if (question.type === "multiple" && Array.isArray(question.answer) && Array.isArray(userAnswer)) {
+      const sortedAnswer = [...question.answer].sort();
+      const sortedUserAnswer = [...userAnswer].sort();
+      isCorrect = JSON.stringify(sortedAnswer) === JSON.stringify(sortedUserAnswer);
+    } else {
+      isCorrect = userAnswer === question.answer;
+    }
 
     return {
       question,

@@ -21,7 +21,7 @@ export function shuffleQuestions(questions: Question[]): Question[] {
 export function answerQuestion(
   state: QuizState,
   questionId: string,
-  answer: string
+  answer: string | string[]
 ): QuizState {
   return {
     ...state,

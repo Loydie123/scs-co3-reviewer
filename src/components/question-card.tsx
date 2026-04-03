@@ -4,8 +4,8 @@ import type { Question } from "@/types";
 
 interface QuestionCardProps {
   question: Question;
-  selectedAnswer?: string;
-  onSelectAnswer: (answer: string) => void;
+  selectedAnswer?: string | string[];
+  onSelectAnswer: (answer: string | string[]) => void;
   showResult?: boolean;
   isSubmitted?: boolean;
 }
@@ -17,18 +17,64 @@ export function QuestionCard({
   showResult = false,
   isSubmitted = false,
 }: QuestionCardProps) {
-  const isCorrect = selectedAnswer === question.answer;
+  const isMultiple = question.type === "multiple";
+  const selectedArray = Array.isArray(selectedAnswer) ? selectedAnswer : [];
+  const correctArray = Array.isArray(question.answer) ? question.answer : [question.answer];
+  
+  let isCorrect = false;
+  if (isMultiple && Array.isArray(selectedAnswer) && Array.isArray(question.answer)) {
+    const sortedAnswer = [...question.answer].sort();
+    const sortedUserAnswer = [...selectedAnswer].sort();
+    isCorrect = JSON.stringify(sortedAnswer) === JSON.stringify(sortedUserAnswer);
+  } else {
+    isCorrect = selectedAnswer === question.answer;
+  }
+
+  const handleChoiceClick = (choice: string) => {
+    if (isSubmitted) return;
+    
+    if (isMultiple) {
+      const currentSelected = Array.isArray(selectedAnswer) ? selectedAnswer : [];
+      if (currentSelected.includes(choice)) {
+        onSelectAnswer(currentSelected.filter(c => c !== choice));
+      } else {
+        onSelectAnswer([...currentSelected, choice]);
+      }
+    } else {
+      onSelectAnswer(choice);
+    }
+  };
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-8">
-      <h3 className="text-lg font-medium text-slate-900 mb-6 leading-relaxed">
-        {question.question}
-      </h3>
+      <div className="flex items-start justify-between mb-6">
+        <h3 className="text-lg font-medium text-slate-900 leading-relaxed flex-1">
+          {question.question}
+        </h3>
+        <div className="flex gap-2 ml-4">
+          <span className={`text-xs font-semibold px-2 py-1 rounded ${
+            question.difficulty === "easy" 
+              ? "bg-green-100 text-green-700"
+              : question.difficulty === "medium"
+              ? "bg-yellow-100 text-yellow-700"
+              : "bg-red-100 text-red-700"
+          }`}>
+            {question.difficulty}
+          </span>
+          {isMultiple && (
+            <span className="text-xs font-semibold px-2 py-1 rounded bg-blue-100 text-blue-700">
+              Multiple
+            </span>
+          )}
+        </div>
+      </div>
 
       <div className="space-y-3">
         {question.choices.map((choice, index) => {
-          const isSelected = selectedAnswer === choice;
-          const isCorrectAnswer = choice === question.answer;
+          const isSelected = isMultiple 
+            ? selectedArray.includes(choice)
+            : selectedAnswer === choice;
+          const isCorrectAnswer = correctArray.includes(choice);
           
           let bgClass = "bg-slate-50";
           let borderClass = "border-slate-200";
@@ -52,16 +98,28 @@ export function QuestionCard({
           return (
             <button
               key={index}
-              onClick={() => !isSubmitted && onSelectAnswer(choice)}
+              onClick={() => handleChoiceClick(choice)}
               disabled={isSubmitted}
               className={`w-full text-left p-4 rounded-lg border transition-all ${bgClass} ${borderClass} ${hoverClass} ${
                 isSubmitted ? "cursor-not-allowed" : "cursor-pointer"
               }`}
             >
               <div className="flex items-start gap-3">
-                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-white border border-slate-300 flex items-center justify-center text-xs font-semibold text-slate-700">
-                  {String.fromCharCode(65 + index)}
-                </span>
+                {isMultiple ? (
+                  <div className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center ${
+                    isSelected ? "bg-blue-600 border-blue-600" : "border-slate-300"
+                  }`}>
+                    {isSelected && (
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
+                ) : (
+                  <span className="flex-shrink-0 w-7 h-7 rounded-full bg-white border border-slate-300 flex items-center justify-center text-xs font-semibold text-slate-700">
+                    {String.fromCharCode(65 + index)}
+                  </span>
+                )}
                 <span className="text-sm text-slate-900 pt-0.5">{choice}</span>
               </div>
             </button>
@@ -74,6 +132,11 @@ export function QuestionCard({
           <p className={`text-sm font-semibold mb-2 ${isCorrect ? "text-emerald-700" : "text-red-700"}`}>
             {isCorrect ? "✓ Correct" : "✗ Incorrect"}
           </p>
+          {isMultiple && (
+            <p className="text-xs text-slate-600 mb-2">
+              Correct answer(s): {correctArray.join(", ")}
+            </p>
+          )}
           <p className="text-sm text-slate-700 leading-relaxed">
             {question.explanation}
           </p>

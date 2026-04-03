@@ -2,6 +2,8 @@
   {
     "id": "d2-q1",
     "domain": "incident-response",
+    "type": "single",
+    "difficulty": "medium",
     "question": "A security team needs to automatically isolate an EC2 instance when GuardDuty detects suspicious activity. Which combination of services should they use?",
     "choices": [
       "GuardDuty + EventBridge + Lambda",
@@ -15,6 +17,8 @@
   {
     "id": "d2-q2",
     "domain": "incident-response",
+    "type": "single",
+    "difficulty": "easy",
     "question": "During a security incident investigation, what is the BEST way to preserve forensic evidence from a compromised EC2 instance?",
     "choices": [
       "Create an EBS snapshot before taking any action",
@@ -28,6 +32,8 @@
   {
     "id": "d2-q3",
     "domain": "incident-response",
+    "type": "single",
+    "difficulty": "easy",
     "question": "Which AWS service provides pre-built automation documents for common incident response tasks?",
     "choices": [
       "AWS Systems Manager Automation",
@@ -41,6 +47,8 @@
   {
     "id": "d2-q4",
     "domain": "incident-response",
+    "type": "single",
+    "difficulty": "medium",
     "question": "A company needs to quickly revoke all active sessions for a compromised IAM user. What should they do?",
     "choices": [
       "Delete the IAM user's access keys and attach an explicit deny policy",
@@ -54,6 +62,8 @@
   {
     "id": "d2-q5",
     "domain": "incident-response",
+    "type": "single",
+    "difficulty": "medium",
     "question": "What is the PRIMARY purpose of CloudTrail log file validation in incident response?",
     "choices": [
       "To verify that log files have not been tampered with after delivery",
@@ -63,5 +73,157 @@
     ],
     "answer": "To verify that log files have not been tampered with after delivery",
     "explanation": "CloudTrail log file validation creates a digital signature for each log file, allowing you to verify that the logs have not been modified or deleted after CloudTrail delivered them."
+  },
+  {
+    "id": "d2-q6",
+    "domain": "incident-response",
+    "type": "multiple",
+    "difficulty": "hard",
+    "question": "A compromised EC2 instance needs to be isolated for forensic analysis. Which actions should be taken? (Select all that apply)",
+    "choices": [
+      "Create an EBS snapshot of the instance volumes",
+      "Modify the security group to deny all inbound and outbound traffic",
+      "Create a memory dump if possible",
+      "Immediately terminate the instance",
+      "Tag the instance as 'compromised'"
+    ],
+    "answer": ["Create an EBS snapshot of the instance volumes", "Modify the security group to deny all inbound and outbound traffic", "Create a memory dump if possible", "Tag the instance as 'compromised'"],
+    "explanation": "Proper isolation includes preserving evidence (snapshots, memory dumps), isolating network access (security groups), and marking the instance (tags). Terminating immediately destroys evidence."
+  },
+  {
+    "id": "d2-q7",
+    "domain": "incident-response",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "Which AWS service can automatically execute remediation actions based on Security Hub findings?",
+    "choices": [
+      "EventBridge with Lambda",
+      "AWS Config only",
+      "CloudWatch Alarms",
+      "GuardDuty"
+    ],
+    "answer": "EventBridge with Lambda",
+    "explanation": "Security Hub sends findings to EventBridge, which can trigger Lambda functions to execute automated remediation actions based on finding types and severity."
+  },
+  {
+    "id": "d2-q8",
+    "domain": "incident-response",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "During an incident, a security team discovers that an attacker has created multiple IAM users. What is the FASTEST way to identify all resources created by these users?",
+    "choices": [
+      "Query CloudTrail logs for API calls made by the compromised users",
+      "Use AWS Config to list all resources",
+      "Check the AWS Console manually",
+      "Use IAM Access Analyzer"
+    ],
+    "answer": "Query CloudTrail logs for API calls made by the compromised users",
+    "explanation": "CloudTrail logs contain all API activity including the identity that made each call. Querying CloudTrail (using CloudTrail Lake or Athena) is the fastest way to identify all actions taken by specific users."
+  },
+  {
+    "id": "d2-q9",
+    "domain": "incident-response",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "What is the recommended approach for storing forensic evidence from security incidents?",
+    "choices": [
+      "Store in a separate AWS account with restricted access",
+      "Store in the same account as the incident",
+      "Store on the compromised instance",
+      "Store in CloudWatch Logs only"
+    ],
+    "answer": "Store in a separate AWS account with restricted access",
+    "explanation": "Forensic evidence should be stored in a separate, secured account to prevent tampering by attackers who may have compromised the original account. This follows the principle of evidence preservation."
+  },
+  {
+    "id": "d2-q10",
+    "domain": "incident-response",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company's AWS account has been compromised and the attacker has root user access. What should be the FIRST priority?",
+    "choices": [
+      "Rotate root user credentials and enable MFA",
+      "Delete all IAM users",
+      "Terminate all EC2 instances",
+      "Disable all security groups"
+    ],
+    "answer": "Rotate root user credentials and enable MFA",
+    "explanation": "If root credentials are compromised, the attacker has full control. The first priority is to rotate root credentials and enable MFA to prevent further access. Then assess and contain the damage."
+  },
+  {
+    "id": "d2-q11",
+    "domain": "incident-response",
+    "type": "single",
+    "difficulty": "easy",
+    "question": "What is the purpose of an incident response runbook?",
+    "choices": [
+      "To provide step-by-step procedures for handling specific incident types",
+      "To store incident logs",
+      "To automatically remediate all incidents",
+      "To prevent incidents from occurring"
+    ],
+    "answer": "To provide step-by-step procedures for handling specific incident types",
+    "explanation": "Runbooks document standardized procedures for responding to specific types of incidents, ensuring consistent and effective response across the team."
+  },
+  {
+    "id": "d2-q12",
+    "domain": "incident-response",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A Lambda function needs to automatically revoke an IAM user's permissions when suspicious activity is detected. What is the MOST effective approach?",
+    "choices": [
+      "Attach an explicit deny-all policy to the user",
+      "Delete the IAM user immediately",
+      "Change the user's password",
+      "Remove the user from all groups"
+    ],
+    "answer": "Attach an explicit deny-all policy to the user",
+    "explanation": "Attaching an explicit deny-all policy immediately revokes all permissions for the user, including active sessions. This is faster and more effective than deleting the user, which may fail if the user has dependencies."
+  },
+  {
+    "id": "d2-q13",
+    "domain": "incident-response",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "During incident response, a security team needs to analyze network traffic from a compromised EC2 instance. VPC Flow Logs are enabled but the team needs more detailed packet-level analysis. What should they do?",
+    "choices": [
+      "Deploy a network packet capture tool on a separate instance in the same subnet",
+      "VPC Flow Logs provide packet-level details",
+      "Use GuardDuty for packet analysis",
+      "Enable CloudTrail data events"
+    ],
+    "answer": "Deploy a network packet capture tool on a separate instance in the same subnet",
+    "explanation": "VPC Flow Logs only capture metadata (source/destination IPs, ports, protocol). For packet-level analysis, you need to deploy packet capture tools like tcpdump or use Traffic Mirroring to copy traffic to an analysis instance."
+  },
+  {
+    "id": "d2-q14",
+    "domain": "incident-response",
+    "type": "multiple",
+    "difficulty": "medium",
+    "question": "Which of the following are important considerations when containing a security incident? (Select all that apply)",
+    "choices": [
+      "Preserve evidence for forensic analysis",
+      "Minimize impact on business operations",
+      "Document all containment actions taken",
+      "Immediately delete all affected resources",
+      "Isolate affected systems from the network"
+    ],
+    "answer": ["Preserve evidence for forensic analysis", "Minimize impact on business operations", "Document all containment actions taken", "Isolate affected systems from the network"],
+    "explanation": "Effective containment balances evidence preservation, business continuity, documentation, and isolation. Immediately deleting resources destroys evidence and should be avoided."
+  },
+  {
+    "id": "d2-q15",
+    "domain": "incident-response",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company discovers that an attacker has created a backdoor Lambda function that exfiltrates data. The function is triggered by S3 events. What is the MOST comprehensive remediation approach?",
+    "choices": [
+      "Delete the Lambda function, remove S3 event trigger, review CloudTrail for other backdoors, rotate credentials",
+      "Only delete the Lambda function",
+      "Disable the S3 bucket",
+      "Delete the entire AWS account"
+    ],
+    "answer": "Delete the Lambda function, remove S3 event trigger, review CloudTrail for other backdoors, rotate credentials",
+    "explanation": "Comprehensive remediation requires removing the backdoor, eliminating triggers, investigating for additional compromises via CloudTrail, and rotating potentially compromised credentials."
   }
 ]

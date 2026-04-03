@@ -2,6 +2,8 @@
   {
     "id": "d3-q1",
     "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "easy",
     "question": "What is the PRIMARY difference between Security Groups and Network ACLs?",
     "choices": [
       "Security Groups are stateful, NACLs are stateless",
@@ -15,6 +17,8 @@
   {
     "id": "d3-q2",
     "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "easy",
     "question": "A company wants to protect their web application from SQL injection and XSS attacks. Which AWS service should they use?",
     "choices": [
       "AWS WAF",
@@ -28,6 +32,8 @@
   {
     "id": "d3-q3",
     "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "medium",
     "question": "Which AWS service provides centralized management of firewall rules across multiple AWS accounts?",
     "choices": [
       "AWS Firewall Manager",
@@ -41,6 +47,8 @@
   {
     "id": "d3-q4",
     "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "easy",
     "question": "What type of DDoS protection does AWS Shield Standard provide?",
     "choices": [
       "Layer 3 and Layer 4 protection",
@@ -54,6 +62,8 @@
   {
     "id": "d3-q5",
     "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "medium",
     "question": "A company needs stateful network traffic inspection with intrusion prevention capabilities at the VPC level. Which service should they use?",
     "choices": [
       "AWS Network Firewall",
@@ -63,5 +73,233 @@
     ],
     "answer": "AWS Network Firewall",
     "explanation": "AWS Network Firewall provides stateful network traffic filtering at the VPC level with intrusion prevention system (IPS) capabilities using Suricata-compatible rules."
+  },
+  {
+    "id": "d3-q6",
+    "domain": "infrastructure-security",
+    "type": "multiple",
+    "difficulty": "medium",
+    "question": "Which AWS resources can AWS WAF be deployed on? (Select all that apply)",
+    "choices": [
+      "Amazon CloudFront",
+      "Application Load Balancer",
+      "Amazon API Gateway",
+      "Network Load Balancer",
+      "EC2 instances"
+    ],
+    "answer": ["Amazon CloudFront", "Application Load Balancer", "Amazon API Gateway"],
+    "explanation": "AWS WAF can be deployed on CloudFront distributions, Application Load Balancers, API Gateway REST APIs, and AWS AppSync. It does not support Network Load Balancers or direct EC2 protection."
+  },
+  {
+    "id": "d3-q7",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company is experiencing a DDoS attack that is overwhelming their application layer (HTTP flood). They have Shield Standard enabled. What should they do?",
+    "choices": [
+      "Upgrade to Shield Advanced for layer 7 protection and DDoS Response Team support",
+      "Shield Standard already protects against layer 7 attacks",
+      "Enable GuardDuty",
+      "Increase EC2 instance size"
+    ],
+    "answer": "Upgrade to Shield Advanced for layer 7 protection and DDoS Response Team support",
+    "explanation": "Shield Standard only protects against layer 3 and 4 attacks. For layer 7 (application layer) DDoS protection, Shield Advanced is required, which includes access to the AWS DDoS Response Team."
+  },
+  {
+    "id": "d3-q8",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "What is the evaluation order for Network ACL rules?",
+    "choices": [
+      "Lowest rule number first",
+      "Highest rule number first",
+      "Alphabetical order",
+      "Random order"
+    ],
+    "answer": "Lowest rule number first",
+    "explanation": "Network ACL rules are evaluated in order from lowest to highest rule number. Once a rule matches, evaluation stops and the action (allow or deny) is applied."
+  },
+  {
+    "id": "d3-q9",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company wants to inspect and filter outbound traffic from their VPC to the internet for known malware domains. Which solution provides this capability?",
+    "choices": [
+      "AWS Network Firewall with domain filtering",
+      "Security Groups with outbound rules",
+      "VPC Flow Logs with Lambda analysis",
+      "AWS WAF on CloudFront"
+    ],
+    "answer": "AWS Network Firewall with domain filtering",
+    "explanation": "AWS Network Firewall supports domain name filtering for outbound traffic, allowing you to block access to known malicious domains. Security groups don't support domain-based filtering."
+  },
+  {
+    "id": "d3-q10",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "Which AWS service can automatically apply security group rules across multiple accounts in an organization?",
+    "choices": [
+      "AWS Firewall Manager",
+      "AWS Config",
+      "AWS Organizations",
+      "AWS Systems Manager"
+    ],
+    "answer": "AWS Firewall Manager",
+    "explanation": "AWS Firewall Manager can centrally configure and manage security groups across accounts in AWS Organizations, ensuring consistent security policies."
+  },
+  {
+    "id": "d3-q11",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "easy",
+    "question": "What is the default behavior of a security group?",
+    "choices": [
+      "Deny all inbound, allow all outbound",
+      "Allow all inbound, deny all outbound",
+      "Deny all inbound and outbound",
+      "Allow all inbound and outbound"
+    ],
+    "answer": "Deny all inbound, allow all outbound",
+    "explanation": "By default, security groups deny all inbound traffic and allow all outbound traffic. You must explicitly add rules to allow inbound traffic."
+  },
+  {
+    "id": "d3-q12",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company uses AWS WAF to protect their application. They want to block requests from a specific country but allow requests from their office IP in that country. What is the BEST approach?",
+    "choices": [
+      "Create two rules: first allow the office IP (higher priority), then block the country (lower priority)",
+      "Only block the country, exceptions are not possible",
+      "Use Security Groups instead of WAF",
+      "Block the country and whitelist the IP in a separate WAF"
+    ],
+    "answer": "Create two rules: first allow the office IP (higher priority), then block the country (lower priority)",
+    "explanation": "WAF rules are evaluated in priority order. By placing the allow rule for the specific IP at a higher priority than the country block rule, you can create exceptions."
+  },
+  {
+    "id": "d3-q13",
+    "domain": "infrastructure-security",
+    "type": "multiple",
+    "difficulty": "medium",
+    "question": "Which of the following are benefits of AWS Shield Advanced? (Select all that apply)",
+    "choices": [
+      "24/7 access to AWS DDoS Response Team",
+      "DDoS cost protection",
+      "Layer 7 DDoS protection",
+      "Free for all AWS customers",
+      "Automatic traffic encryption"
+    ],
+    "answer": ["24/7 access to AWS DDoS Response Team", "DDoS cost protection", "Layer 7 DDoS protection"],
+    "explanation": "Shield Advanced provides DRT access, cost protection for scaling during attacks, and layer 7 protection. It's not free (requires subscription) and doesn't provide encryption."
+  },
+  {
+    "id": "d3-q14",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company has a VPC with public and private subnets. EC2 instances in private subnets need to download security patches from the internet. What is the MOST secure solution?",
+    "choices": [
+      "Use a NAT Gateway in the public subnet",
+      "Assign public IPs to instances in private subnets",
+      "Move instances to public subnets",
+      "Use VPC peering to another VPC with internet access"
+    ],
+    "answer": "Use a NAT Gateway in the public subnet",
+    "explanation": "NAT Gateway allows instances in private subnets to initiate outbound internet connections while remaining private (no inbound internet access). This is more secure than assigning public IPs."
+  },
+  {
+    "id": "d3-q15",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "What is the purpose of VPC Flow Logs?",
+    "choices": [
+      "To capture information about IP traffic going to and from network interfaces",
+      "To encrypt network traffic",
+      "To block malicious traffic",
+      "To route traffic between subnets"
+    ],
+    "answer": "To capture information about IP traffic going to and from network interfaces",
+    "explanation": "VPC Flow Logs capture metadata about IP traffic (source, destination, ports, protocol, action) for monitoring and security analysis. They don't encrypt or block traffic."
+  },
+  {
+    "id": "d3-q16",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A security engineer needs to implement defense in depth for a web application. The application runs on EC2 instances behind an ALB in a VPC. Which combination provides the MOST comprehensive protection?",
+    "choices": [
+      "WAF on ALB + Security Groups on EC2 + NACLs on subnets + Shield Advanced",
+      "Only WAF on ALB",
+      "Only Security Groups on EC2",
+      "WAF + GuardDuty"
+    ],
+    "answer": "WAF on ALB + Security Groups on EC2 + NACLs on subnets + Shield Advanced",
+    "explanation": "Defense in depth requires multiple security layers: WAF for application-layer attacks, security groups for instance-level control, NACLs for subnet-level control, and Shield Advanced for DDoS protection."
+  },
+  {
+    "id": "d3-q17",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "Can security group rules reference other security groups?",
+    "choices": [
+      "Yes, you can reference security groups as sources or destinations",
+      "No, only IP addresses are allowed",
+      "Yes, but only in the same VPC",
+      "No, security groups cannot reference each other"
+    ],
+    "answer": "Yes, you can reference security groups as sources or destinations",
+    "explanation": "Security groups can reference other security groups as sources or destinations, allowing dynamic access control as instances are added or removed from groups."
+  },
+  {
+    "id": "d3-q18",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company wants to use AWS WAF to block requests that contain SQL injection patterns in the query string. However, they have a legitimate application that uses SQL-like syntax in URLs. How can they handle this?",
+    "choices": [
+      "Use WAF rule exceptions to allow specific patterns or paths",
+      "Disable SQL injection protection entirely",
+      "Use a different WAF for the legitimate application",
+      "SQL injection protection cannot have exceptions"
+    ],
+    "answer": "Use WAF rule exceptions to allow specific patterns or paths",
+    "explanation": "WAF supports rule exceptions and scope-down statements that allow you to exclude specific URIs, IP addresses, or patterns from managed rule groups, preventing false positives."
+  },
+  {
+    "id": "d3-q19",
+    "domain": "infrastructure-security",
+    "type": "multiple",
+    "difficulty": "hard",
+    "question": "A company needs to implement network segmentation in their VPC. Which strategies should they use? (Select all that apply)",
+    "choices": [
+      "Use separate subnets for different tiers (web, app, database)",
+      "Use security groups to control traffic between tiers",
+      "Use NACLs for subnet-level access control",
+      "Put all resources in a single subnet for simplicity",
+      "Use VPC peering for tier separation"
+    ],
+    "answer": ["Use separate subnets for different tiers (web, app, database)", "Use security groups to control traffic between tiers", "Use NACLs for subnet-level access control"],
+    "explanation": "Proper network segmentation uses separate subnets for different tiers, security groups for instance-level control, and NACLs for subnet-level control. Putting all resources in one subnet defeats the purpose of segmentation."
+  },
+  {
+    "id": "d3-q20",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company's application is protected by AWS WAF with rate-based rules. During a flash sale, legitimate users are being blocked. What is the BEST solution?",
+    "choices": [
+      "Increase the rate limit threshold or use CAPTCHA challenge instead of block",
+      "Disable WAF during the sale",
+      "Block all traffic and manually approve users",
+      "Rate limits cannot be adjusted"
+    ],
+    "answer": "Increase the rate limit threshold or use CAPTCHA challenge instead of block",
+    "explanation": "Rate-based rules can be adjusted to higher thresholds for expected traffic spikes. Alternatively, use CAPTCHA action instead of block to challenge suspicious traffic while allowing legitimate users to proceed."
   }
 ]

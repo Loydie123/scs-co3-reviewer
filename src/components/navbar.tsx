@@ -30,6 +30,12 @@ export function Navbar() {
             >
               Quiz
             </Link>
+            <Link
+              href="/mock-exam"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+            >
+              Mock Exam
+            </Link>
           </div>
         </div>
       </div>
