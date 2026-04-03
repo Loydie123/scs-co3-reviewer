@@ -1,0 +1,67 @@
+[
+  {
+    "id": "d1-q1",
+    "domain": "detection",
+    "question": "Which AWS service is best suited to detect suspicious activity and potential threats in AWS accounts and workloads?",
+    "choices": [
+      "Amazon GuardDuty",
+      "AWS Artifact",
+      "AWS Organizations",
+      "Amazon Route 53"
+    ],
+    "answer": "Amazon GuardDuty",
+    "explanation": "Amazon GuardDuty is a threat detection service that continuously monitors AWS accounts, workloads, and data sources for malicious or unauthorized behavior."
+  },
+  {
+    "id": "d1-q2",
+    "domain": "detection",
+    "question": "A company wants to automatically discover and protect sensitive data stored in Amazon S3. Which service should they use?",
+    "choices": [
+      "Amazon Macie",
+      "AWS Shield",
+      "AWS WAF",
+      "Amazon Inspector"
+    ],
+    "answer": "Amazon Macie",
+    "explanation": "Amazon Macie uses machine learning to automatically discover, classify, and protect sensitive data in S3, such as PII and financial information."
+  },
+  {
+    "id": "d1-q3",
+    "domain": "detection",
+    "question": "Which AWS service provides a comprehensive view of security alerts and compliance status across multiple AWS accounts?",
+    "choices": [
+      "AWS Security Hub",
+      "Amazon CloudWatch",
+      "AWS Config",
+      "AWS Systems Manager"
+    ],
+    "answer": "AWS Security Hub",
+    "explanation": "AWS Security Hub aggregates, organizes, and prioritizes security findings from multiple AWS services and third-party tools, providing a comprehensive security posture view."
+  },
+  {
+    "id": "d1-q4",
+    "domain": "detection",
+    "question": "What type of logs does Amazon GuardDuty analyze to detect threats?",
+    "choices": [
+      "CloudTrail logs, VPC Flow Logs, and DNS logs",
+      "Only CloudTrail logs",
+      "Only VPC Flow Logs",
+      "Application logs from EC2 instances"
+    ],
+    "answer": "CloudTrail logs, VPC Flow Logs, and DNS logs",
+    "explanation": "GuardDuty analyzes multiple data sources including CloudTrail management and data events, VPC Flow Logs, and DNS logs to identify potential security threats."
+  },
+  {
+    "id": "d1-q5",
+    "domain": "detection",
+    "question": "A security team needs to create custom alerts when specific API calls are made in their AWS account. Which combination of services should they use?",
+    "choices": [
+      "CloudTrail + CloudWatch Logs + CloudWatch Alarms",
+      "GuardDuty + SNS",
+      "Security Hub + Lambda",
+      "Config + EventBridge"
+    ],
+    "answer": "CloudTrail + CloudWatch Logs + CloudWatch Alarms",
+    "explanation": "CloudTrail captures API calls, CloudWatch Logs stores them, and metric filters with CloudWatch Alarms can trigger notifications for specific API activity patterns."
+  }
+]
