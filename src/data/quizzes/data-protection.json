@@ -118,5 +118,85 @@
       "S3 Object Lock in governance mode": "Governance mode allows users with special permissions (s3:BypassGovernanceRetention) to override retention and delete objects. This doesn't meet the requirement that objects cannot be deleted even by users with delete permissions. Compliance mode is needed for strict immutability.",
       "S3 Cross-Region Replication": "CRR copies objects to another region for disaster recovery but doesn't prevent deletion in the source bucket. If objects are deleted or encrypted by ransomware in the source, CRR would replicate those changes to the destination. You need Object Lock for immutability, not just replication."
     }
+  },
+  {
+    "id": "d5-q7",
+    "domain": "data-protection",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A company needs to encrypt data before sending it to S3, but wants AWS to handle the encryption keys. The encryption must happen on the client side before data leaves their application servers. Which solution meets these requirements?",
+    "choices": [
+      "Use AWS Encryption SDK with KMS keys",
+      "Use SSE-KMS",
+      "Use SSE-S3",
+      "Use SSE-C"
+    ],
+    "answer": "Use AWS Encryption SDK with KMS keys",
+    "explanation": "The AWS Encryption SDK provides client-side encryption libraries that encrypt data before it leaves your application. It can use KMS keys for key management, so AWS handles the keys while encryption happens client-side. This meets both requirements: client-side encryption and AWS-managed keys.",
+    "why_not": {
+      "Use SSE-KMS": "SSE-KMS is server-side encryption where S3 encrypts data after receiving it. The data travels to S3 unencrypted (though in TLS). The requirement is for client-side encryption before data leaves the application servers, which SSE-KMS doesn't provide.",
+      "Use SSE-S3": "SSE-S3 is also server-side encryption where S3 handles encryption after receiving data. Like SSE-KMS, data travels to S3 unencrypted (in TLS). This doesn't meet the requirement for client-side encryption before data leaves the servers.",
+      "Use SSE-C": "SSE-C is server-side encryption where you provide the encryption key with each request. While you control the keys, encryption still happens server-side at S3, not client-side. Additionally, you manage keys yourself, not AWS. This doesn't meet either requirement."
+    }
+  },
+  {
+    "id": "d5-q8",
+    "domain": "data-protection",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A financial application stores sensitive data in DynamoDB and needs to encrypt specific attributes (like SSN and credit card numbers) with different encryption keys per customer. The application must be able to query on non-encrypted attributes. What is the BEST approach?",
+    "choices": [
+      "Use client-side encryption with AWS Encryption SDK and customer-specific KMS keys",
+      "Use DynamoDB encryption at rest with KMS",
+      "Use application-level encryption before storing in DynamoDB",
+      "Use field-level encryption in CloudFront"
+    ],
+    "answer": "Use client-side encryption with AWS Encryption SDK and customer-specific KMS keys",
+    "explanation": "The AWS Encryption SDK provides client-side encryption with support for attribute-level encryption. You can encrypt specific attributes (SSN, credit card) with different KMS keys per customer before storing in DynamoDB. Non-encrypted attributes remain queryable. The SDK handles key management through KMS and provides cryptographic best practices.",
+    "why_not": {
+      "Use DynamoDB encryption at rest with KMS": "DynamoDB encryption at rest encrypts the entire table with a single key. It doesn't support per-attribute encryption or customer-specific keys. All data is encrypted with the same key, and you can't selectively encrypt only sensitive attributes. This doesn't meet the requirement for different keys per customer.",
+      "Use application-level encryption before storing in DynamoDB": "While this could work, implementing encryption correctly is complex and error-prone. The AWS Encryption SDK is specifically designed for this use case and provides secure defaults, key management integration with KMS, and envelope encryption. Reinventing this in application code increases security risk.",
+      "Use field-level encryption in CloudFront": "CloudFront field-level encryption protects data in transit from CloudFront to origin, not data at rest in DynamoDB. It's for protecting sensitive fields as they travel through CDN edge locations. This doesn't address encryption of data stored in DynamoDB or customer-specific keys."
+    }
+  },
+  {
+    "id": "d5-q9",
+    "domain": "data-protection",
+    "type": "single",
+    "difficulty": "easy",
+    "question": "A company wants to ensure that all new EBS volumes are encrypted by default across all regions in their AWS account. What should they enable?",
+    "choices": [
+      "EBS encryption by default in each region",
+      "AWS Config rule to detect unencrypted volumes",
+      "Service Control Policy requiring encryption",
+      "CloudWatch alarm for unencrypted volumes"
+    ],
+    "answer": "EBS encryption by default in each region",
+    "explanation": "EBS encryption by default is a regional setting that automatically encrypts all new EBS volumes and snapshots created in that region. Once enabled, you don't need to specify encryption when creating volumes—it happens automatically. This is the preventive control that ensures encryption from the start.",
+    "why_not": {
+      "AWS Config rule to detect unencrypted volumes": "Config rules are detective controls that alert you after unencrypted volumes are created. They don't prevent creation of unencrypted volumes. You want a preventive control (EBS encryption by default) that ensures volumes are encrypted from creation, not detection after the fact.",
+      "Service Control Policy requiring encryption": "While SCPs can restrict actions, they can't enable EBS encryption by default. SCPs could deny creation of unencrypted volumes, but that would cause failures rather than automatically encrypting. EBS encryption by default is the proper mechanism for automatic encryption.",
+      "CloudWatch alarm for unencrypted volumes": "CloudWatch alarms are reactive and notify after unencrypted volumes exist. They don't prevent creation of unencrypted volumes or automatically encrypt them. You need EBS encryption by default as a preventive control, not CloudWatch as a detective control."
+    }
+  },
+  {
+    "id": "d5-q10",
+    "domain": "data-protection",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A company uses KMS to encrypt data and needs to ensure that deleted KMS keys cannot be used to decrypt data, but they want a safety period in case of accidental deletion. What is the recommended approach?",
+    "choices": [
+      "Schedule key deletion with a waiting period (7-30 days)",
+      "Disable the key immediately",
+      "Delete the key immediately",
+      "Rotate the key instead of deleting"
+    ],
+    "answer": "Schedule key deletion with a waiting period (7-30 days)",
+    "explanation": "KMS doesn't allow immediate key deletion. Instead, you schedule deletion with a mandatory waiting period of 7-30 days. During this period, the key is disabled and cannot be used, but deletion can be canceled if it was accidental. After the waiting period, the key is permanently deleted. This provides both security and a safety net.",
+    "why_not": {
+      "Disable the key immediately": "Disabling a key prevents its use but doesn't delete it. The key remains in your account and you continue paying for it. If the goal is to permanently remove the key (not just temporarily disable it), you should schedule deletion. Disabling is appropriate for temporary suspension, not permanent removal.",
+      "Delete the key immediately": "AWS KMS doesn't support immediate key deletion for security reasons. The mandatory waiting period prevents accidental data loss from hasty key deletion. Immediate deletion would be dangerous—if you deleted the wrong key, all data encrypted with it would be permanently inaccessible.",
+      "Rotate the key instead of deleting": "Key rotation creates a new key version but keeps the old version for decrypting existing data. If you want to stop using a key entirely and ensure it can't decrypt data, rotation isn't appropriate—you need to schedule deletion. Rotation is for ongoing key management, not key removal."
+    }
   }
 ]

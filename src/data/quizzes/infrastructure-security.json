@@ -198,5 +198,66 @@
       "Amazon GuardDuty": "GuardDuty analyzes VPC Flow Logs (among other sources) to detect threats, but it doesn't provide the raw traffic data needed for troubleshooting connectivity issues. GuardDuty generates high-level findings about threats, not detailed packet-level information for debugging network problems.",
       "AWS Config": "Config tracks resource configuration changes (like Security Group rule modifications) but doesn't capture actual network traffic. While Config can show you what rules exist, it won't tell you if traffic is being accepted or rejected in real-time. You need Flow Logs to see actual traffic patterns."
     }
+  },
+  {
+    "id": "d3-q11",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A company wants to allow EC2 instances in a private subnet to access DynamoDB without internet access. They want to minimize costs and maintain private connectivity. What should they implement?",
+    "choices": [
+      "VPC Gateway Endpoint for DynamoDB",
+      "VPC Interface Endpoint for DynamoDB",
+      "NAT Gateway",
+      "Internet Gateway"
+    ],
+    "answer": "VPC Gateway Endpoint for DynamoDB",
+    "explanation": "Gateway endpoints for DynamoDB (and S3) are completely free and route traffic through AWS's private network without requiring an internet gateway or NAT device. They're added to route tables and provide private connectivity at no cost. This is the most cost-effective solution for DynamoDB access from private subnets.",
+    "why_not": {
+      "VPC Interface Endpoint for DynamoDB": "While DynamoDB does support interface endpoints, they are charged per hour and per GB of data processed. Gateway endpoints are available for DynamoDB and are free, making them more cost-effective. Interface endpoints should be used for services that don't support gateway endpoints.",
+      "NAT Gateway": "NAT gateways are charged per hour ($0.045/hour) and per GB processed ($0.045/GB), making them expensive for high-volume DynamoDB traffic. Additionally, NAT gateways route through the internet (though encrypted), not AWS's private network. Gateway endpoints are free and fully private.",
+      "Internet Gateway": "Internet gateways provide internet access but would require instances to have public IPs or elastic IPs, exposing them to the internet. This violates the requirement for private subnet instances and introduces security risks. Gateway endpoints keep traffic private within AWS's network."
+    }
+  },
+  {
+    "id": "d3-q12",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A web application uses an Application Load Balancer and needs protection against SQL injection, XSS, and automated bot attacks. The security team also wants to rate-limit requests from specific IPs. What combination provides comprehensive protection?",
+    "choices": [
+      "AWS WAF with AWS Managed Rules and custom rate-based rules",
+      "Security Groups with restrictive rules",
+      "Network ACLs with IP deny rules",
+      "AWS Shield Advanced only"
+    ],
+    "answer": "AWS WAF with AWS Managed Rules and custom rate-based rules",
+    "explanation": "AWS WAF provides Layer 7 protection for web applications. AWS Managed Rules include pre-configured rule groups for SQL injection, XSS, and bot control (based on OWASP Top 10). Custom rate-based rules can limit requests per IP (e.g., 2000 requests per 5 minutes). This combination provides comprehensive application-layer protection.",
+    "why_not": {
+      "Security Groups with restrictive rules": "Security Groups operate at Layer 4 (transport layer) and can only filter based on IP, port, and protocol. They cannot inspect HTTP request contents to detect SQL injection, XSS, or bot behavior, and they don't support rate limiting. This requires Layer 7 inspection that only WAF provides.",
+      "Network ACLs with IP deny rules": "NACLs operate at Layer 3/4 and can only block specific IPs. They cannot detect SQL injection or XSS in HTTP payloads, differentiate between bots and legitimate users, or implement rate limiting per IP. Application-layer attacks require application-layer protection (WAF).",
+      "AWS Shield Advanced only": "Shield is for DDoS protection (volumetric attacks), not for application-layer exploits like SQL injection and XSS. While Shield Advanced includes WAF at no extra cost, the question specifically asks about SQL injection, XSS, and bot protection, which are WAF's primary capabilities, not Shield's."
+    }
+  },
+  {
+    "id": "d3-q13",
+    "domain": "infrastructure-security",
+    "type": "multiple",
+    "difficulty": "medium",
+    "question": "A company wants to protect their web application from DDoS attacks and application-layer exploits. Which TWO AWS services should they implement? (Select TWO)",
+    "choices": [
+      "AWS Shield Standard for DDoS protection",
+      "AWS WAF for application-layer protection",
+      "Amazon GuardDuty for threat detection",
+      "VPC Flow Logs for monitoring",
+      "AWS Config for compliance"
+    ],
+    "answer": ["AWS Shield Standard for DDoS protection", "AWS WAF for application-layer protection"],
+    "explanation": "AWS Shield Standard provides automatic DDoS protection against common Layer 3/4 attacks (SYN floods, UDP reflection) at no cost. AWS WAF protects against application-layer exploits (SQL injection, XSS, bad bots) by inspecting HTTP/HTTPS requests. Together, they provide comprehensive protection from both network-layer DDoS and application-layer attacks.",
+    "why_not": {
+      "Amazon GuardDuty for threat detection": "GuardDuty detects threats by analyzing logs but doesn't actively protect or block attacks. It would alert you about suspicious activity but wouldn't prevent DDoS or application exploits. Shield and WAF are the protective services that actively block attacks.",
+      "VPC Flow Logs for monitoring": "Flow Logs are for monitoring and logging network traffic, not for protection. They're detective controls that help with investigation but don't block DDoS attacks or application exploits. You need Shield and WAF for active protection.",
+      "AWS Config for compliance": "Config monitors resource configurations for compliance, not attacks. It doesn't provide DDoS protection or application-layer security. Config is for governance and compliance, not threat protection."
+    }
   }
 ]

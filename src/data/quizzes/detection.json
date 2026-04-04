@@ -198,5 +198,66 @@
       "CloudTrail with CloudWatch Logs Insights": "While CloudTrail logs S3 API calls and Logs Insights can query them, this requires manual query creation and doesn't provide intelligent, ML-based detection of unusual patterns. It's reactive analysis, not proactive threat detection, and lacks the real-time alerting capabilities.",
       "VPC Flow Logs with CloudWatch Alarms": "VPC Flow Logs capture network traffic but don't provide visibility into S3 API calls or data access patterns. S3 is accessed via API calls (not network flows in the traditional sense), so VPC Flow Logs won't detect S3 data exfiltration."
     }
+  },
+  {
+    "id": "d1-q11",
+    "domain": "detection",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A company wants to identify which IAM users and roles have permissions to access sensitive S3 buckets, even if they haven't used those permissions yet. They need to analyze cross-account access as well. Which service provides this capability?",
+    "choices": [
+      "IAM Access Analyzer",
+      "AWS Config",
+      "CloudTrail",
+      "GuardDuty"
+    ],
+    "answer": "IAM Access Analyzer",
+    "explanation": "IAM Access Analyzer analyzes resource-based policies (like S3 bucket policies) to identify all external principals (IAM users, roles, accounts) that have access to your resources. It shows potential access based on policies, not actual usage. It also detects cross-account and public access, making it perfect for identifying who could access sensitive buckets.",
+    "why_not": {
+      "AWS Config": "Config tracks resource configurations and compliance but doesn't analyze IAM policies to determine which principals have access to resources. Config can show you the bucket policy, but it doesn't interpret the policy to list all principals with access. That's Access Analyzer's job.",
+      "CloudTrail": "CloudTrail shows actual API calls that have been made (historical usage), not potential access based on policies. If a user has permission but hasn't used it yet, CloudTrail won't show them. Access Analyzer identifies potential access regardless of whether it's been used.",
+      "GuardDuty": "GuardDuty detects threats and malicious activity, not policy-based access analysis. It wouldn't identify which users have permissions to access buckets—it would only alert if suspicious access attempts occur. Access Analyzer is for proactive access analysis, GuardDuty is for threat detection."
+    }
+  },
+  {
+    "id": "d1-q12",
+    "domain": "detection",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company needs to detect when AWS credentials are used from IP addresses outside their corporate network ranges. They want automated detection across all AWS accounts in their organization. What is the BEST solution?",
+    "choices": [
+      "Enable GuardDuty across the organization with trusted IP lists configured",
+      "Create CloudWatch metric filters on CloudTrail logs",
+      "Use AWS Config rules to check source IPs",
+      "Enable VPC Flow Logs and analyze with Athena"
+    ],
+    "answer": "Enable GuardDuty across the organization with trusted IP lists configured",
+    "explanation": "GuardDuty can be enabled organization-wide and supports trusted IP lists (safe IP ranges) and threat lists (known malicious IPs). GuardDuty will automatically detect credential usage from IPs outside your trusted ranges and generate findings. It uses ML and threat intelligence for intelligent detection across all accounts with centralized management.",
+    "why_not": {
+      "Create CloudWatch metric filters on CloudTrail logs": "This requires creating and maintaining custom metric filters and alarms for each account, which doesn't scale well across an organization. It also lacks the intelligence and context that GuardDuty provides (like correlating with threat intelligence). It's manual and reactive compared to GuardDuty's automated, intelligent detection.",
+      "Use AWS Config rules to check source IPs": "Config rules evaluate resource configurations, not real-time API activity or source IPs of API calls. Config doesn't have visibility into the source IP of API calls or credential usage patterns. This is not the right tool for detecting credential usage from specific IPs.",
+      "Enable VPC Flow Logs and analyze with Athena": "VPC Flow Logs capture network traffic within VPCs but don't capture AWS API calls or credential usage. AWS API calls (like accessing S3, launching EC2) aren't captured in VPC Flow Logs—they're in CloudTrail. GuardDuty analyzes CloudTrail for credential usage patterns, which is what's needed here."
+    }
+  },
+  {
+    "id": "d1-q13",
+    "domain": "detection",
+    "type": "multiple",
+    "difficulty": "medium",
+    "question": "A security team wants to implement comprehensive logging and monitoring for their AWS environment. Which TWO services should they enable to capture both API activity and network traffic? (Select TWO)",
+    "choices": [
+      "AWS CloudTrail for API call logging",
+      "VPC Flow Logs for network traffic",
+      "Amazon GuardDuty for threat detection",
+      "AWS Config for resource configuration",
+      "Amazon Macie for data classification"
+    ],
+    "answer": ["AWS CloudTrail for API call logging", "VPC Flow Logs for network traffic"],
+    "explanation": "CloudTrail records all API calls made in your AWS account (who did what, when, from where), providing audit trails for compliance and security analysis. VPC Flow Logs capture network traffic metadata (source/destination IPs, ports, protocols, accept/reject status) for troubleshooting and security analysis. Together, they provide comprehensive visibility into both control plane (API) and data plane (network) activity.",
+    "why_not": {
+      "Amazon GuardDuty for threat detection": "GuardDuty is important for threat detection but it analyzes logs (CloudTrail, VPC Flow Logs, DNS logs) rather than capturing them. The question asks about capturing logs, not analyzing them. You need CloudTrail and Flow Logs first, then GuardDuty can analyze them.",
+      "AWS Config for resource configuration": "Config tracks resource configuration changes and compliance, not API activity or network traffic. While valuable for governance, it doesn't provide the logging capabilities asked for in the question. CloudTrail and Flow Logs are the logging services.",
+      "Amazon Macie for data classification": "Macie discovers and classifies sensitive data in S3, not general logging. It doesn't capture API calls or network traffic. Macie is for data security, not comprehensive logging and monitoring."
+    }
   }
 ]

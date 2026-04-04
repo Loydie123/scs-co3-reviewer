@@ -118,5 +118,85 @@
       "Use AWS Budgets to alert when costs exceed threshold": "Budgets are a detective control that alerts after costs are incurred. This doesn't prevent the use of expensive services—it only notifies you after the spending has occurred. You need a preventive control (SCP) to block the services before costs are incurred.",
       "Enable AWS Cost Explorer to monitor service usage": "Cost Explorer is for analyzing and visualizing costs after they occur. Like Budgets, it's a detective control that doesn't prevent the use of services. It helps you understand spending patterns but doesn't enforce restrictions. You need SCPs for prevention."
     }
+  },
+  {
+    "id": "d6-q8",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A company needs to ensure all EC2 instances have approved AMIs and terminate any instances launched from unapproved AMIs. They want automated enforcement. Which solution provides this capability?",
+    "choices": [
+      "AWS Config rule with automatic remediation to terminate non-compliant instances",
+      "Service Control Policy to deny launching unapproved AMIs",
+      "EventBridge rule to detect and terminate instances",
+      "AWS Systems Manager to scan and terminate instances"
+    ],
+    "answer": "AWS Config rule with automatic remediation to terminate non-compliant instances",
+    "explanation": "AWS Config has a managed rule 'approved-amis-by-id' that checks if instances are launched from approved AMI IDs. You can configure automatic remediation to trigger a Systems Manager Automation document that terminates non-compliant instances. This provides continuous monitoring and automated enforcement.",
+    "why_not": {
+      "Service Control Policy to deny launching unapproved AMIs": "SCPs can't specify allowed AMI IDs—they work with services and actions, not resource-specific attributes like AMI IDs. You'd need to use IAM policies with conditions for AMI restrictions, but even then, it's preventive (blocks launch) rather than detective (terminates after launch). Config is better for this use case.",
+      "EventBridge rule to detect and terminate instances": "EventBridge can detect EC2 instance launch events, but it doesn't have built-in logic to check if the AMI is approved. You'd need to write custom Lambda code to check AMI IDs and terminate instances. Config provides this functionality out-of-the-box with managed rules and automatic remediation.",
+      "AWS Systems Manager to scan and terminate instances": "Systems Manager doesn't continuously monitor for compliance or automatically detect unapproved AMIs. It's a tool for executing actions, not for compliance monitoring. Config is the service that continuously evaluates compliance and can trigger Systems Manager for remediation."
+    }
+  },
+  {
+    "id": "d6-q9",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company has an organization with multiple accounts. They want to centrally manage and deploy security services (GuardDuty, Security Hub, Macie) across all accounts including new accounts created in the future. What is the MOST efficient approach?",
+    "choices": [
+      "Designate a delegated administrator account and enable organization-wide integration",
+      "Manually enable services in each account",
+      "Use CloudFormation StackSets to deploy across accounts",
+      "Create Lambda function to enable services when accounts are created"
+    ],
+    "answer": "Designate a delegated administrator account and enable organization-wide integration",
+    "explanation": "AWS security services support Organizations integration with delegated administrators. You designate one account as the delegated admin for each service, then enable organization-wide integration. This automatically enables the service in all existing and future accounts, with centralized management and aggregated findings. This is the native, most efficient approach.",
+    "why_not": {
+      "Manually enable services in each account": "Manual enablement doesn't scale and is error-prone. New accounts won't have services enabled automatically. You'd need to remember to enable services for each new account. Organizations integration automates this entirely, ensuring consistent security posture across all accounts.",
+      "Use CloudFormation StackSets to deploy across accounts": "While StackSets can deploy resources across accounts, it requires maintaining templates and manually adding new accounts to the stack set. Organizations integration is simpler and automatically includes new accounts. StackSets are better for custom resources, not for AWS security services that have native Organizations support.",
+      "Create Lambda function to enable services when accounts are created": "This custom solution requires building, maintaining, and monitoring Lambda code. Organizations integration provides this functionality natively without custom code. Building custom automation when native integration exists adds unnecessary complexity and maintenance burden."
+    }
+  },
+  {
+    "id": "d6-q10",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "easy",
+    "question": "A company wants to prevent anyone in their organization from creating resources outside of us-east-1 and us-west-2 regions. What should they implement?",
+    "choices": [
+      "Service Control Policy with deny for other regions",
+      "IAM policy in each account",
+      "AWS Config rule to detect resources in other regions",
+      "CloudWatch alarm for resources in other regions"
+    ],
+    "answer": "Service Control Policy with deny for other regions",
+    "explanation": "SCPs can restrict which regions accounts can use by denying actions in unauthorized regions. Create an SCP with a condition that denies all actions except in us-east-1 and us-west-2. Apply it to the organization root or specific OUs. This prevents resource creation in other regions across all accounts, regardless of IAM permissions.",
+    "why_not": {
+      "IAM policy in each account": "IAM policies in individual accounts can be modified by account administrators. For organization-wide enforcement that can't be overridden, you need SCPs. Additionally, managing IAM policies across many accounts is inefficient compared to a single SCP.",
+      "AWS Config rule to detect resources in other regions": "Config rules are detective—they alert after resources are created in unauthorized regions. They don't prevent creation. You need a preventive control (SCP) that blocks resource creation in unauthorized regions before it happens, not detection after the fact.",
+      "CloudWatch alarm for resources in other regions": "CloudWatch alarms are reactive and notify after resources exist in unauthorized regions. They don't prevent creation. For preventive control that blocks actions before they happen, use SCPs. CloudWatch is for monitoring, not enforcement."
+    }
+  },
+  {
+    "id": "d6-q11",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A company needs to track configuration changes to security groups and receive notifications when rules are modified. They want to know who made the change and when. Which combination of services provides this capability?",
+    "choices": [
+      "AWS Config to track changes and SNS for notifications",
+      "CloudTrail to log API calls and CloudWatch for alarms",
+      "GuardDuty to detect changes",
+      "Security Hub to monitor security groups"
+    ],
+    "answer": "AWS Config to track changes and SNS for notifications",
+    "explanation": "AWS Config continuously records configuration changes to resources including security groups. It captures what changed, when, and who made the change. Config can send notifications to SNS when resources change, providing real-time alerts. Config also maintains configuration history for compliance and auditing.",
+    "why_not": {
+      "CloudTrail to log API calls and CloudWatch for alarms": "While CloudTrail logs the API calls (like AuthorizeSecurityGroupIngress), it doesn't track the resulting configuration state or provide easy comparison of before/after configurations. Config is purpose-built for tracking configuration changes and provides better visibility into what actually changed in the security group rules.",
+      "GuardDuty to detect changes": "GuardDuty detects threats and malicious activity, not configuration changes. It wouldn't generate findings for legitimate security group modifications. GuardDuty is for threat detection, not configuration change tracking. You need Config for configuration monitoring.",
+      "Security Hub to monitor security groups": "Security Hub aggregates findings from other services but doesn't directly track configuration changes. It would show Config findings if Config is enabled, but Config is the service actually doing the tracking. Security Hub is for aggregation and prioritization, not for configuration change detection."
+    }
   }
 ]

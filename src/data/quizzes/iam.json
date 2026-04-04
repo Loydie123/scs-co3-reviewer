@@ -198,5 +198,66 @@
       "Enable AWS Config rules to detect and alert on these actions": "Config rules are detective controls that alert you after a violation occurs—they don't prevent the action from happening. By the time you receive an alert, the account might have already left the organization or disabled CloudTrail. You need preventive controls (SCPs), not just detective controls.",
       "Use CloudWatch Events to trigger Lambda functions that reverse these changes": "This is a reactive approach that allows the action to occur before reversing it. There's a window of time where the account could be outside the organization or CloudTrail could be disabled. SCPs prevent the action from happening in the first place, which is more secure."
     }
+  },
+  {
+    "id": "d4-q11",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A developer needs temporary access to production S3 buckets for 2 hours to troubleshoot an issue. The security team wants to grant access without creating permanent credentials. What is the MOST secure approach?",
+    "choices": [
+      "Create an IAM role with S3 permissions and have the developer assume it with STS",
+      "Create an IAM user with access keys and delete after 2 hours",
+      "Add the developer's IAM user to an admin group temporarily",
+      "Share the root account credentials for 2 hours"
+    ],
+    "answer": "Create an IAM role with S3 permissions and have the developer assume it with STS",
+    "explanation": "IAM roles with STS provide temporary security credentials that automatically expire. The role can be configured with specific S3 permissions (least privilege) and a maximum session duration of 2 hours. The developer assumes the role via STS AssumeRole, gets temporary credentials, and they expire automatically. No permanent credentials are created.",
+    "why_not": {
+      "Create an IAM user with access keys and delete after 2 hours": "This creates permanent credentials that must be manually deleted. There's risk of forgetting to delete them, the credentials being leaked before deletion, or the developer saving them. Temporary credentials from STS are more secure because they expire automatically.",
+      "Add the developer's IAM user to an admin group temporarily": "This grants excessive permissions (admin access to everything, not just S3) and requires manual removal from the group. It violates least privilege and creates operational overhead. Roles with specific permissions and automatic expiration are more secure.",
+      "Share the root account credentials for 2 hours": "This is extremely dangerous and violates AWS security best practices. Root credentials should never be shared, have unlimited access, and can't be restricted. Even temporarily sharing root credentials poses massive security risk. Always use IAM roles for temporary access."
+    }
+  },
+  {
+    "id": "d4-q12",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company uses a third-party SaaS application that needs to access their AWS resources. The SaaS provider gives them an external ID to use. The security team is concerned about the confused deputy problem. How does the external ID help prevent this?",
+    "choices": [
+      "The external ID ensures only the customer's resources are accessed, not other customers using the same SaaS provider",
+      "The external ID encrypts the data in transit",
+      "The external ID provides MFA for the SaaS application",
+      "The external ID allows the SaaS provider to audit access"
+    ],
+    "answer": "The external ID ensures only the customer's resources are accessed, not other customers using the same SaaS provider",
+    "explanation": "The confused deputy problem occurs when a SaaS provider's role could be tricked into accessing the wrong customer's resources. The external ID acts as a secret between you and the SaaS provider. When the SaaS provider assumes your role, they must provide the correct external ID. This prevents another customer from tricking the SaaS provider into accessing your resources by guessing your account ID.",
+    "why_not": {
+      "The external ID encrypts the data in transit": "External ID has nothing to do with encryption. It's a security token used in the AssumeRole API call to prevent the confused deputy problem. Encryption in transit is handled by TLS/SSL, not external IDs.",
+      "The external ID provides MFA for the SaaS application": "External ID is not MFA. It's a shared secret used to verify the identity of the party assuming the role. MFA would require a time-based token from an MFA device. External ID is simpler—it's a string that must be provided when assuming the role.",
+      "The external ID allows the SaaS provider to audit access": "External ID is not for auditing. CloudTrail logs role assumptions and would show the external ID used, but the purpose of external ID is to prevent unauthorized role assumptions (confused deputy problem), not to enable auditing. Auditing is CloudTrail's job."
+    }
+  },
+  {
+    "id": "d4-q13",
+    "domain": "iam",
+    "type": "multiple",
+    "difficulty": "hard",
+    "question": "A company needs to grant a third-party vendor temporary access to specific S3 buckets. The access should be time-limited and auditable. Which TWO actions should they take? (Select TWO)",
+    "choices": [
+      "Create an IAM role with S3 permissions and a trust policy allowing the vendor's AWS account",
+      "Require the vendor to use an external ID when assuming the role",
+      "Create an IAM user with access keys for the vendor",
+      "Share the root account credentials temporarily",
+      "Use S3 bucket policies to grant public access"
+    ],
+    "answer": ["Create an IAM role with S3 permissions and a trust policy allowing the vendor's AWS account", "Require the vendor to use an external ID when assuming the role"],
+    "explanation": "Creating an IAM role with cross-account trust allows the vendor to assume the role from their AWS account using STS, providing temporary credentials that automatically expire. The external ID prevents the confused deputy problem where the vendor could be tricked into accessing the wrong customer's resources. This combination provides secure, time-limited, auditable access.",
+    "why_not": {
+      "Create an IAM user with access keys for the vendor": "IAM users create permanent credentials that don't expire automatically. This violates the time-limited requirement and creates security risks if the vendor doesn't properly secure or delete the keys. Roles with STS provide automatic expiration.",
+      "Share the root account credentials temporarily": "This is extremely dangerous and violates all AWS security best practices. Root credentials should never be shared, have unlimited access, and can't be restricted or time-limited. This would give the vendor complete control over your entire AWS account.",
+      "Use S3 bucket policies to grant public access": "Public access would allow anyone on the internet to access the buckets, not just the vendor. This is a massive security risk and doesn't provide time-limited or auditable access. Cross-account roles are the secure way to grant vendor access."
+    }
   }
 ]

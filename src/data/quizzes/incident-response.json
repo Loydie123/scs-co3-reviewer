@@ -138,5 +138,65 @@
       "Delete the bucket immediately": "Deleting the bucket destroys evidence needed for investigation and may cause application outages if the data is still needed. You need to assess the situation, preserve evidence (logs, object metadata), and plan recovery. Deletion is too drastic and prevents proper incident investigation.",
       "Enable S3 versioning to track access": "Versioning tracks object changes, not access. It doesn't block public access or show who accessed objects. For access tracking, you need S3 server access logs or CloudTrail data events. Versioning is useful for recovery but doesn't address the immediate need to contain the exposure."
     }
+  },
+  {
+    "id": "d2-q8",
+    "domain": "incident-response",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A company needs to automate the isolation of compromised EC2 instances when GuardDuty detects cryptocurrency mining. The instance should be moved to a quarantine security group that blocks all traffic except SSH from a forensic investigation IP. What is the BEST automation approach?",
+    "choices": [
+      "EventBridge rule triggers Lambda to modify the instance security group",
+      "CloudWatch Alarm triggers SNS to notify security team",
+      "Config rule with automatic remediation",
+      "Security Hub custom action manually triggered"
+    ],
+    "answer": "EventBridge rule triggers Lambda to modify the instance security group",
+    "explanation": "GuardDuty findings are published to EventBridge. Create an EventBridge rule matching the CryptoCurrency:EC2/BitcoinTool finding type that triggers a Lambda function. The Lambda function modifies the instance's security group to attach a quarantine security group that blocks all traffic except SSH from the forensic IP. This provides immediate automated containment.",
+    "why_not": {
+      "CloudWatch Alarm triggers SNS to notify security team": "SNS notification is manual and introduces delay. By the time the security team responds, the compromised instance continues mining and potentially spreading. Automated isolation is faster and more effective for containment.",
+      "Config rule with automatic remediation": "Config rules evaluate resource configurations, not security findings from GuardDuty. Config doesn't integrate with GuardDuty findings for automated response. Config is for configuration compliance, not threat response.",
+      "Security Hub custom action manually triggered": "Custom actions require manual triggering by a user, which introduces delay. For cryptocurrency mining (which can spread quickly), automated response is critical. Manual actions are appropriate for complex decisions, not straightforward isolation."
+    }
+  },
+  {
+    "id": "d2-q9",
+    "domain": "incident-response",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "During a ransomware incident, the security team needs to restore encrypted EC2 instances and EBS volumes. They have EBS snapshots from before the infection. However, they're concerned the snapshots might contain the initial compromise vector. What is the MOST secure recovery approach?",
+    "choices": [
+      "Launch new instances from clean AMIs, restore only data volumes from snapshots, scan for malware before mounting",
+      "Restore instances directly from snapshots and run antivirus",
+      "Launch new instances and restore all volumes from snapshots",
+      "Use AWS Backup to restore the entire environment"
+    ],
+    "answer": "Launch new instances from clean AMIs, restore only data volumes from snapshots, scan for malware before mounting",
+    "explanation": "The most secure approach is to launch new instances from known-clean AMIs (operating system and applications), then restore only the data volumes from snapshots. Before mounting data volumes, scan them for malware using a forensic instance. This ensures the OS and applications are clean while recovering data, and prevents reinfection from compromised system files in snapshots.",
+    "why_not": {
+      "Restore instances directly from snapshots and run antivirus": "If the snapshot contains the initial compromise vector (like a backdoor in the OS or application), restoring directly reintroduces the vulnerability. Antivirus might not detect sophisticated malware. Starting with clean AMIs is more secure.",
+      "Launch new instances and restore all volumes from snapshots": "Restoring all volumes (including root/system volumes) from snapshots could reintroduce the malware or compromise vector. System volumes should come from clean AMIs, not potentially compromised snapshots. Only data volumes should be restored from snapshots after scanning.",
+      "Use AWS Backup to restore the entire environment": "AWS Backup restores resources to their previous state, which could include the compromise. Like restoring from snapshots, this could reintroduce malware. The secure approach is selective restoration: clean AMIs for systems, scanned snapshots for data only."
+    }
+  },
+  {
+    "id": "d2-q10",
+    "domain": "incident-response",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A security team is responding to a potential data exfiltration incident. They need to analyze VPC Flow Logs to identify which EC2 instance sent large amounts of data to an external IP address over the past 7 days. What is the MOST efficient way to query this data?",
+    "choices": [
+      "Use Amazon Athena to query Flow Logs stored in S3",
+      "Download Flow Logs and analyze locally with scripts",
+      "Use CloudWatch Logs Insights if Flow Logs are sent to CloudWatch",
+      "Use Amazon Detective to visualize traffic patterns"
+    ],
+    "answer": "Use Amazon Athena to query Flow Logs stored in S3",
+    "explanation": "Athena is purpose-built for querying large datasets in S3 using SQL. VPC Flow Logs stored in S3 can be queried efficiently with Athena to find instances with high outbound data transfer to specific IPs. You can aggregate bytes, filter by destination IP, and sort by volume. Athena is serverless, scalable, and cost-effective for this analysis.",
+    "why_not": {
+      "Download Flow Logs and analyze locally with scripts": "Flow Logs for 7 days across multiple instances can be gigabytes of data. Downloading and processing locally is slow, expensive (data transfer costs), and doesn't scale. Athena queries data in place without downloading, making it much more efficient.",
+      "Use CloudWatch Logs Insights if Flow Logs are sent to CloudWatch": "While CloudWatch Logs Insights can query Flow Logs, it's more expensive for large-scale queries and has query time limits. If Flow Logs are already in S3 (the default), Athena is more cost-effective and powerful for analyzing 7 days of data across many instances.",
+      "Use Amazon Detective to visualize traffic patterns": "Detective is excellent for investigation and visualization, but for specific queries like 'which instance sent most data to this IP,' Athena provides more direct SQL-based analysis. Detective is better for understanding relationships and timelines, while Athena is better for targeted data queries."
+    }
   }
 ]
