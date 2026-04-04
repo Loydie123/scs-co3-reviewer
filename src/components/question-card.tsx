@@ -45,12 +45,21 @@ export function QuestionCard({
     }
   };
 
+  const requiredAnswers = isMultiple && Array.isArray(question.answer) ? question.answer.length : 1;
+
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-8">
       <div className="flex items-start justify-between mb-6">
-        <h3 className="text-lg font-medium text-slate-900 leading-relaxed flex-1">
-          {question.question}
-        </h3>
+        <div className="flex-1">
+          <h3 className="text-lg font-medium text-slate-900 leading-relaxed">
+            {question.question}
+          </h3>
+          {isMultiple && (
+            <p className="text-sm font-semibold text-blue-600 mt-2">
+              Select {requiredAnswers === 2 ? "TWO" : requiredAnswers === 3 ? "THREE" : `${requiredAnswers}`} answers
+            </p>
+          )}
+        </div>
         <div className="flex gap-2 ml-4">
           <span className={`text-xs font-semibold px-2 py-1 rounded ${
             question.difficulty === "easy" 
