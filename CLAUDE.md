@@ -1,148 +1,180 @@
-5. Question Data Format
+You are improving an existing Next.js frontend-only app.
 
-Suggested JSON structure:
+The app is NOT just an exam reviewer.
 
-[
-  {
-    "id": "d1-q1",
-    "domain": "Detection",
-    "question": "Which AWS service is best suited to detect suspicious activity and potential threats in AWS accounts and workloads?",
-    "choices": [
-      "Amazon GuardDuty",
-      "AWS Artifact",
-      "AWS Organizations",
-      "Amazon Route 53"
-    ],
-    "answer": "Amazon GuardDuty",
-    "explanation": "Amazon GuardDuty is a threat detection service that continuously monitors AWS accounts, workloads, and data sources for malicious or unauthorized behavior."
+It is a learning + practice platform for AWS SCS-C03.
+
+IMPORTANT:
+- Follow CLAUDE.md
+- No backend
+- No overengineering
+- Use local data only
+- Keep MVP simple
+
+---
+
+## CORE OBJECTIVE
+
+Transform the app into a complete learning system:
+
+1. Review page = understanding concepts deeply
+2. Quiz page = applying knowledge like real AWS exam
+
+---
+
+## TASK 1 — Upgrade Review Page (LEARNING MODE)
+
+The review page should NOT feel like plain notes.
+
+Each topic must include:
+
+- Concept explanation (simple and clear)
+- When to use this service
+- When NOT to use this
+- Common real-world scenario
+- Comparison with similar AWS services
+- Best practices
+- Key exam tips
+
+---
+
+### Example:
+
+Instead of:
+"GuardDuty is a threat detection service"
+
+Rewrite as:
+
+Concept:
+GuardDuty detects suspicious activity in AWS accounts using logs like CloudTrail.
+
+When to use:
+Use GuardDuty when you need continuous threat detection across accounts.
+
+When NOT to use:
+Do not rely on GuardDuty alone for compliance reporting.
+
+Scenario:
+A company wants to detect anomalous API calls across multiple AWS accounts...
+
+Comparison:
+GuardDuty vs Security Hub vs Detective
+
+Best practice:
+Enable GuardDuty in all regions and aggregate findings.
+
+---
+
+## TASK 2 — Add Comparison Sections (VERY IMPORTANT)
+
+Add comparisons inside reviewer:
+
+- Security Groups vs NACL
+- IAM Policy vs SCP
+- KMS vs CloudHSM
+- GuardDuty vs Security Hub vs Detective
+- CloudTrail vs CloudWatch Logs
+- SSE-S3 vs SSE-KMS vs SSE-C
+
+---
+
+## TASK 3 — Upgrade Quiz (EXAM MODE)
+
+Convert all questions into scenario-based.
+
+Each question:
+- 2–4 sentences
+- real-world AWS scenario
+- includes constraints (cost, security, compliance)
+- asks for BEST answer
+
+---
+
+## TASK 4 — Improve Question Format
+
+{
+  id: string,
+  domain: string,
+  difficulty: "easy" | "medium" | "hard",
+  question: string,
+  choices: string[],
+  answer: string,
+  explanation: string,
+  why_not: {
+    A: string,
+    B: string,
+    C: string,
+    D: string
   }
-]
-6. Functional Requirements
-Reviewer
-user can browse all six domains
-user can open a specific domain
-user can read summarized domain topics
-user can move between domains smoothly
-Quiz
-user can choose a domain quiz
-user can choose a mixed quiz
-user can answer all questions
-user can submit the quiz
-app computes total score
-app shows correct and incorrect answers
-app shows explanation for each question
-Results
-app displays:
-total score
-total items
-percentage
-domain category
-app allows quiz retake
-app allows review of mistakes
-7. Non-Functional Requirements
-fast loading
-simple UI
-readable typography
-responsive on desktop and mobile
-maintainable content structure
-easy to update with Git commits
-no backend dependency for MVP
-8. Tech Stack
-Next.js
-TypeScript
-Tailwind CSS
-shadcn/ui or reusable custom UI components
-local JSON / TS content files
-Vercel for deployment
-Git/GitHub for version control
-9. Git/GitHub Workflow
+}
 
-Recommended Git workflow:
+---
 
-Branches
-main → production-ready branch
-dev → active development branch
-feature branches:
-feature/home-page
-feature/reviewer-page
-feature/quiz-mode
-feature/results-page
-feature/dark-mode
-Example commits
-init nextjs project
-setup app layout and tailwind
-add home page and domain cards
-add reviewer content structure
-add quiz question rendering
-add score calculation logic
-add results page
-add domain filters and navigation
-deploy app to vercel
-10. MVP Definition
+## TASK 5 — Add Difficulty Levels
 
-The first version should include only the essentials:
+- Easy → concept understanding
+- Medium → applied logic
+- Hard → real exam scenario
 
-Home page
-Reviewer page
-Quiz page
-Results page
-six SCS-C03 domains
-static reviewer content
-static quiz data
-score calculation
-responsive UI
+---
 
-This is enough for a fully usable first release.
+## TASK 6 — Improve Quiz Logic
 
-11. Future Improvements
+- randomize questions
+- randomize answers
+- track incorrect answers
+- review wrong answers mode
+- score per domain
 
-Possible version 2 features:
+---
 
-flashcard mode
-mock exam mode with timer
-save progress in localStorage
-bookmarks / favorite topics
-weak-area tracking
-domain analytics chart
-explanation-first learning mode
-search bar for services and topics
-question difficulty tags
-streak tracking
-spaced repetition mode
+## TASK 7 — Improve Results Page
 
-Possible version 3 features:
+- score
+- percentage
+- domain breakdown
+- weak areas
+- incorrect answers with explanation
 
-authentication
-cloud database
-admin content editor
-multiple users
-leaderboard
-shared reviewer links
-12. Study Alignment Notes
+---
 
-This project should stay aligned to the current AWS SCS-C03 guide, not random unstructured notes. The app content must prioritize domain-based review according to the official exam outline and weightings published by AWS. AWS also describes the certification as validating expertise in creating and implementing security solutions in AWS, including data protection mechanisms, encryption approaches, and secure AWS security controls.
+## TASK 8 — Coverage (CRITICAL)
 
-To keep the app aligned:
+Ensure content includes:
 
-organize content by the six official domains
-prioritize high-weight domains appropriately
-keep explanations scenario-based
-focus on AWS services commonly tied to each domain
-avoid irrelevant non-exam filler topics
-treat the app as a reviewer and practice tool, not an exam dump
-13. Development Goal
+- IAM policy evaluation
+- STS / temporary credentials
+- KMS and encryption types
+- S3 encryption differences
+- CloudTrail vs CloudWatch
+- GuardDuty / Security Hub / Detective
+- Organizations / SCPs
+- VPC endpoints
+- WAF / Shield
 
-Create a polished and practical AWS SCS-C03 Reviewer & Quiz Web App that is:
+---
 
-easy to study with
-easy to maintain
-easy to deploy
-clearly aligned with the official AWS exam structure
-useful as both a personal study tool and a frontend portfolio project
-14. Disclaimer
+## TASK 9 — Architecture
 
-This project is an unofficial study tool created for review and practice purposes only. It is not affiliated with, endorsed by, or published by AWS. Exam objectives, domains, and weightings should always be checked against the latest official AWS exam guide.
+- keep components modular
+- separate data from UI
+- clean structure
+- reusable components
 
+---
 
-Pwede rin kitang gawan agad ng **folder structure + starter data schema + prompt for Cursor** na tugma dito.
-::contentReference[oaicite:4]{index=4}
+## TASK 10 — DO NOT DO
+
+- no backend
+- no auth
+- no database
+- no overengineering
+
+---
+
+## FINAL RULE
+
+Review page = understanding  
+Quiz page = decision-making
+
+Do not mix them.
