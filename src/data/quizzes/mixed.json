@@ -2,131 +2,201 @@
   {
     "id": "mixed-q1",
     "domain": "detection",
-    "question": "Which AWS service is best suited to detect suspicious activity and potential threats in AWS accounts and workloads?",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A company needs to detect unauthorized API calls and potential account compromises across their AWS environment using machine learning and threat intelligence. Which service should they implement?",
     "choices": [
       "Amazon GuardDuty",
-      "AWS Artifact",
-      "AWS Organizations",
-      "Amazon Route 53"
+      "AWS CloudTrail",
+      "AWS Security Hub",
+      "Amazon Detective"
     ],
     "answer": "Amazon GuardDuty",
-    "explanation": "Amazon GuardDuty is a threat detection service that continuously monitors AWS accounts, workloads, and data sources for malicious or unauthorized behavior."
+    "explanation": "GuardDuty provides intelligent threat detection using machine learning, anomaly detection, and integrated threat intelligence. It continuously monitors CloudTrail logs, VPC Flow Logs, and DNS logs without requiring any infrastructure management.",
+    "why_not": {
+      "AWS CloudTrail": "CloudTrail records API calls but doesn't provide intelligent threat detection or machine learning capabilities. You would need to manually create alarms for specific patterns.",
+      "AWS Security Hub": "Security Hub aggregates findings from multiple sources but doesn't generate threat detections itself. It requires GuardDuty or other services to detect threats.",
+      "Amazon Detective": "Detective is used for investigating security findings after they've been detected. It doesn't detect threats—it helps you understand how incidents happened."
+    }
   },
   {
     "id": "mixed-q2",
     "domain": "iam",
-    "question": "In IAM policy evaluation, what happens when there is both an explicit allow and an explicit deny for the same action?",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A company has an IAM user with an identity policy allowing s3:* and a permission boundary allowing only s3:GetObject. When the user tries to upload an object, what happens?",
     "choices": [
-      "Explicit deny always wins",
-      "Explicit allow always wins",
-      "The most recent policy takes precedence",
-      "The policy with the highest priority wins"
+      "Upload is denied because the permission boundary doesn't allow s3:PutObject",
+      "Upload succeeds because the identity policy allows s3:*",
+      "Upload is denied by default",
+      "Upload requires MFA"
     ],
-    "answer": "Explicit deny always wins",
-    "explanation": "In IAM policy evaluation logic, an explicit deny always overrides any explicit allows. This is a fundamental security principle in AWS."
+    "answer": "Upload is denied because the permission boundary doesn't allow s3:PutObject",
+    "explanation": "Effective permissions are the intersection of identity policy AND permission boundary. The permission boundary sets the maximum allowed permissions. Since it only allows GetObject, PutObject is denied even though the identity policy grants it.",
+    "why_not": {
+      "Upload succeeds because the identity policy allows s3:*": "While the identity policy allows s3:*, the permission boundary acts as a maximum limit. Both must allow the action for it to succeed.",
+      "Upload is denied by default": "The upload is denied, but not by default—it's specifically denied because the permission boundary doesn't include s3:PutObject in its allowed actions.",
+      "Upload requires MFA": "MFA is not automatically required. It must be explicitly enforced through policy conditions. The denial is due to the permission boundary, not MFA requirements."
+    }
   },
   {
     "id": "mixed-q3",
-    "domain": "data-protection",
-    "question": "What is the PRIMARY benefit of using envelope encryption with AWS KMS?",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A security engineer needs to block traffic from a specific malicious IP address that must apply to all instances in a subnet. Which solution should they implement?",
     "choices": [
-      "Reduces network load by encrypting data locally with data keys",
-      "Provides faster encryption than direct KMS encryption",
-      "Eliminates the need for key rotation",
-      "Allows encryption without using KMS"
+      "Add a deny rule to the Network ACL",
+      "Add a deny rule to the Security Group",
+      "Configure AWS WAF",
+      "Use VPC Flow Logs"
     ],
-    "answer": "Reduces network load by encrypting data locally with data keys",
-    "explanation": "Envelope encryption uses data keys to encrypt data locally, reducing the amount of data sent to KMS. Only the data key needs to be encrypted/decrypted by KMS, not the entire dataset."
+    "answer": "Add a deny rule to the Network ACL",
+    "explanation": "Network ACLs support explicit deny rules and operate at the subnet level, applying to all instances. This is the correct tool for blocking specific IP addresses at the subnet level.",
+    "why_not": {
+      "Add a deny rule to the Security Group": "Security Groups only support allow rules—they cannot explicitly deny. They work on implicit deny (anything not allowed is denied).",
+      "Configure AWS WAF": "WAF is for HTTP/HTTPS traffic protection and is attached to CloudFront, ALB, or API Gateway—not directly to EC2 instances.",
+      "Use VPC Flow Logs": "Flow Logs monitor and log traffic but don't block it. They're detective, not preventive."
+    }
   },
   {
     "id": "mixed-q4",
-    "domain": "infrastructure-security",
-    "question": "What is the PRIMARY difference between Security Groups and Network ACLs?",
-    "choices": [
-      "Security Groups are stateful, NACLs are stateless",
-      "Security Groups are stateless, NACLs are stateful",
-      "Security Groups support deny rules, NACLs do not",
-      "Security Groups apply at the VPC level, NACLs at the instance level"
-    ],
-    "answer": "Security Groups are stateful, NACLs are stateless",
-    "explanation": "Security groups are stateful (return traffic is automatically allowed), while NACLs are stateless (return traffic must be explicitly allowed with rules)."
-  },
-  {
-    "id": "mixed-q5",
-    "domain": "incident-response",
-    "question": "A security team needs to automatically isolate an EC2 instance when GuardDuty detects suspicious activity. Which combination of services should they use?",
-    "choices": [
-      "GuardDuty + EventBridge + Lambda",
-      "GuardDuty + SNS + CloudWatch",
-      "Security Hub + Config + Systems Manager",
-      "CloudTrail + CloudWatch Alarms + SNS"
-    ],
-    "answer": "GuardDuty + EventBridge + Lambda",
-    "explanation": "GuardDuty findings can trigger EventBridge rules, which invoke Lambda functions to automatically isolate instances by modifying security groups or moving them to isolated subnets."
-  },
-  {
-    "id": "mixed-q6",
-    "domain": "governance",
-    "question": "Which AWS service automates the setup of a secure, multi-account AWS environment based on best practices?",
-    "choices": [
-      "AWS Control Tower",
-      "AWS Organizations",
-      "AWS Config",
-      "AWS CloudFormation"
-    ],
-    "answer": "AWS Control Tower",
-    "explanation": "AWS Control Tower automates the setup of a landing zone, which is a secure, multi-account AWS environment based on AWS best practices. It includes pre-configured guardrails and account provisioning."
-  },
-  {
-    "id": "mixed-q7",
-    "domain": "detection",
-    "question": "A company wants to automatically discover and protect sensitive data stored in Amazon S3. Which service should they use?",
-    "choices": [
-      "Amazon Macie",
-      "AWS Shield",
-      "AWS WAF",
-      "Amazon Inspector"
-    ],
-    "answer": "Amazon Macie",
-    "explanation": "Amazon Macie uses machine learning to automatically discover, classify, and protect sensitive data in S3, such as PII and financial information."
-  },
-  {
-    "id": "mixed-q8",
-    "domain": "iam",
-    "question": "What is the purpose of an IAM permission boundary?",
-    "choices": [
-      "To set the maximum permissions an IAM entity can have",
-      "To grant additional permissions to an IAM entity",
-      "To encrypt IAM credentials",
-      "To enable MFA for an IAM user"
-    ],
-    "answer": "To set the maximum permissions an IAM entity can have",
-    "explanation": "Permission boundaries define the maximum permissions that an identity-based policy can grant to an IAM entity. They don't grant permissions themselves, they limit them."
-  },
-  {
-    "id": "mixed-q9",
-    "domain": "infrastructure-security",
-    "question": "A company wants to protect their web application from SQL injection and XSS attacks. Which AWS service should they use?",
-    "choices": [
-      "AWS WAF",
-      "AWS Shield",
-      "Security Groups",
-      "Network ACLs"
-    ],
-    "answer": "AWS WAF",
-    "explanation": "AWS WAF (Web Application Firewall) protects against common web exploits like SQL injection and cross-site scripting (XSS) by filtering HTTP/HTTPS requests."
-  },
-  {
-    "id": "mixed-q10",
     "domain": "data-protection",
-    "question": "Which S3 encryption option provides an audit trail of key usage in CloudTrail?",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A company needs S3 encryption with audit trails showing every encrypt/decrypt operation and automatic key rotation. What should they use?",
     "choices": [
-      "SSE-KMS",
+      "SSE-KMS with customer-managed keys",
       "SSE-S3",
       "SSE-C",
       "Client-side encryption"
     ],
-    "answer": "SSE-KMS",
-    "explanation": "SSE-KMS (Server-Side Encryption with KMS) logs all key usage in CloudTrail, providing an audit trail of when keys were used to encrypt or decrypt objects."
+    "answer": "SSE-KMS with customer-managed keys",
+    "explanation": "SSE-KMS provides CloudTrail audit trails for every key usage, automatic annual rotation for customer-managed keys, and key policies for access control. This meets all requirements.",
+    "why_not": {
+      "SSE-S3": "SSE-S3 doesn't provide audit trails for key usage or control over key rotation. AWS manages everything without visibility.",
+      "SSE-C": "SSE-C requires you to manage keys and doesn't provide CloudTrail audit trails for key usage or automatic rotation.",
+      "Client-side encryption": "Requires you to manage encryption, keys, and rotation yourself without integrated CloudTrail auditing."
+    }
+  },
+  {
+    "id": "mixed-q5",
+    "domain": "incident-response",
+    "type": "single",
+    "difficulty": "hard",
+    "question": "A GuardDuty finding indicates a compromised EC2 instance. What should be the FIRST action to preserve forensic evidence?",
+    "choices": [
+      "Take an EBS snapshot of the instance volumes",
+      "Terminate the instance immediately",
+      "Modify the security group to block all traffic",
+      "Run antivirus on the instance"
+    ],
+    "answer": "Take an EBS snapshot of the instance volumes",
+    "explanation": "Preserving evidence is critical for forensic investigation and should be done before any remediation. Taking an EBS snapshot captures the exact state of the compromised instance for analysis.",
+    "why_not": {
+      "Terminate the instance immediately": "Terminating destroys evidence needed for understanding how the compromise occurred and preventing future incidents.",
+      "Modify the security group to block all traffic": "Modifying before snapshots could alert the attacker and trigger destructive actions. Take snapshots first to preserve exact state.",
+      "Run antivirus on the instance": "Running tools on a compromised instance modifies files and timestamps, destroying forensic evidence."
+    }
+  },
+  {
+    "id": "mixed-q6",
+    "domain": "governance",
+    "type": "single",
+    "difficulty": "medium",
+    "question": "A company needs to prevent all accounts in their organization from disabling CloudTrail. What should they use?",
+    "choices": [
+      "Service Control Policy (SCP) with explicit deny",
+      "IAM policies in each account",
+      "AWS Config rules",
+      "CloudWatch Alarms"
+    ],
+    "answer": "Service Control Policy (SCP) with explicit deny",
+    "explanation": "SCPs are organization-level policies that cannot be overridden by member accounts. An explicit deny in an SCP prevents all principals in affected accounts from performing the action, even administrators.",
+    "why_not": {
+      "IAM policies in each account": "Account administrators can modify IAM policies within their accounts. IAM policies are insufficient for organization-wide enforcement.",
+      "AWS Config rules": "Config rules are detective—they alert after CloudTrail is disabled. They don't prevent the action from happening.",
+      "CloudWatch Alarms": "Alarms are reactive and alert after the action occurs. They don't prevent CloudTrail from being disabled."
+    }
+  },
+  {
+    "id": "mixed-q7",
+    "domain": "detection",
+    "type": "single",
+    "difficulty": "easy",
+    "question": "A company wants to ensure CloudTrail logs haven't been tampered with. Which feature provides cryptographic proof of log integrity?",
+    "choices": [
+      "CloudTrail log file validation",
+      "S3 bucket versioning",
+      "CloudTrail Insights",
+      "S3 Object Lock"
+    ],
+    "answer": "CloudTrail log file validation",
+    "explanation": "Log file validation uses SHA-256 hashing to create digest files that cryptographically prove logs haven't been modified, deleted, or forged after delivery.",
+    "why_not": {
+      "S3 bucket versioning": "Versioning helps recover modified objects but doesn't provide cryptographic proof of integrity.",
+      "CloudTrail Insights": "Insights detects unusual API activity patterns, not log tampering.",
+      "S3 Object Lock": "Object Lock prevents deletion but doesn't provide cryptographic verification of integrity."
+    }
+  },
+  {
+    "id": "mixed-q8",
+    "domain": "iam",
+    "type": "single",
+    "difficulty": "easy",
+    "question": "What is the default behavior in IAM when no policy explicitly allows or denies an action?",
+    "choices": [
+      "Implicit deny (action is denied)",
+      "Implicit allow (action is allowed)",
+      "Action requires MFA",
+      "Action is allowed if user has console access"
+    ],
+    "answer": "Implicit deny (action is denied)",
+    "explanation": "By default, all actions in AWS are denied unless explicitly allowed. This deny-by-default approach is a fundamental security principle in AWS, ensuring permissions must be explicitly granted.",
+    "why_not": {
+      "Implicit allow (action is allowed)": "This is the opposite of how AWS works. Allowing everything by default would be a massive security risk.",
+      "Action requires MFA": "MFA is not required by default. It must be explicitly enforced through policy conditions.",
+      "Action is allowed if user has console access": "Console access and API permissions are separate. Having console access doesn't automatically grant action permissions."
+    }
+  },
+  {
+    "id": "mixed-q9",
+    "domain": "data-protection",
+    "type": "single",
+    "difficulty": "easy",
+    "question": "A company needs the simplest S3 encryption with no additional cost. Which option should they choose?",
+    "choices": [
+      "SSE-S3",
+      "SSE-KMS",
+      "SSE-C",
+      "Client-side encryption"
+    ],
+    "answer": "SSE-S3",
+    "explanation": "SSE-S3 is the simplest encryption option where S3 manages all keys automatically using AES-256. No additional cost beyond S3 storage and no key management required.",
+    "why_not": {
+      "SSE-KMS": "SSE-KMS has additional costs for KMS API calls and requires managing KMS keys.",
+      "SSE-C": "SSE-C requires providing keys with every request and managing keys outside AWS—more complex.",
+      "Client-side encryption": "Requires managing entire encryption process and keys yourself—most complex option."
+    }
+  },
+  {
+    "id": "mixed-q10",
+    "domain": "infrastructure-security",
+    "type": "single",
+    "difficulty": "easy",
+    "question": "A company wants free DDoS protection for their CloudFront distribution. Which service provides this automatically?",
+    "choices": [
+      "AWS Shield Standard",
+      "AWS Shield Advanced",
+      "AWS WAF",
+      "Amazon GuardDuty"
+    ],
+    "answer": "AWS Shield Standard",
+    "explanation": "AWS Shield Standard is automatically enabled for all AWS customers at no cost, providing protection against common Layer 3/4 DDoS attacks.",
+    "why_not": {
+      "AWS Shield Advanced": "Shield Advanced costs $3,000/month. The question asks for free protection.",
+      "AWS WAF": "WAF protects against application-layer attacks but has costs and is not primarily for DDoS.",
+      "Amazon GuardDuty": "GuardDuty is for threat detection, not DDoS protection, and has costs."
+    }
   }
 ]

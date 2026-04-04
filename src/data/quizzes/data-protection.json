@@ -3,303 +3,120 @@
     "id": "d5-q1",
     "domain": "data-protection",
     "type": "single",
-    "difficulty": "medium",
-    "question": "What is the PRIMARY benefit of using envelope encryption with AWS KMS?",
+    "difficulty": "hard",
+    "question": "A healthcare company needs to encrypt patient records in S3 with full control over encryption keys, automatic key rotation, and audit trails showing every time keys are used to encrypt or decrypt data. The solution must comply with HIPAA requirements. What is the MOST appropriate encryption option?",
     "choices": [
-      "Reduces network load by encrypting data locally with data keys",
-      "Provides faster encryption than direct KMS encryption",
-      "Eliminates the need for key rotation",
-      "Allows encryption without using KMS"
+      "SSE-KMS with customer-managed keys",
+      "SSE-S3",
+      "SSE-C with customer-provided keys",
+      "Client-side encryption"
     ],
-    "answer": "Reduces network load by encrypting data locally with data keys",
-    "explanation": "Envelope encryption uses data keys to encrypt data locally, reducing the amount of data sent to KMS. Only the data key needs to be encrypted/decrypted by KMS, not the entire dataset."
+    "answer": "SSE-KMS with customer-managed keys",
+    "explanation": "SSE-KMS with customer-managed keys provides full control over encryption keys through key policies, automatic annual key rotation, and comprehensive audit trails via CloudTrail that log every encrypt/decrypt operation. This meets HIPAA requirements for key management controls and audit trails. Customer-managed keys give you control over key lifecycle, policies, and deletion.",
+    "why_not": {
+      "SSE-S3": "SSE-S3 uses AWS-managed keys that you cannot control or audit at the key usage level. While it provides encryption, you don't have visibility into key usage through CloudTrail, cannot set key policies, and cannot control key rotation schedule. HIPAA compliance often requires these controls.",
+      "SSE-C with customer-provided keys": "SSE-C requires you to provide the encryption key with every request and manage keys entirely outside AWS. While this gives control, it doesn't provide automatic rotation or CloudTrail audit trails for key usage. You'd need to build key management infrastructure yourself, which is more complex than using KMS.",
+      "Client-side encryption": "Client-side encryption gives maximum control but requires you to manage the entire encryption process, key storage, and rotation yourself. It's more complex to implement and doesn't provide the integrated CloudTrail audit trails that SSE-KMS offers. For most HIPAA scenarios, SSE-KMS is simpler and sufficient."
+    }
   },
   {
     "id": "d5-q2",
     "domain": "data-protection",
     "type": "single",
-    "difficulty": "easy",
-    "question": "Which S3 encryption option provides an audit trail of key usage in CloudTrail?",
+    "difficulty": "medium",
+    "question": "A company needs to encrypt a 50GB database backup file before uploading to S3. They want to use KMS for key management. However, when they try to encrypt the file directly with KMS, they receive an error. What is the issue and solution?",
     "choices": [
-      "SSE-KMS",
-      "SSE-S3",
-      "SSE-C",
-      "Client-side encryption"
+      "KMS has a 4KB limit for direct encryption; use envelope encryption with GenerateDataKey",
+      "KMS requires Shield Advanced for large files",
+      "The KMS key needs to be in the same region as S3",
+      "KMS can only encrypt data in transit, not at rest"
     ],
-    "answer": "SSE-KMS",
-    "explanation": "SSE-KMS (Server-Side Encryption with KMS) logs all key usage in CloudTrail, providing an audit trail of when keys were used to encrypt or decrypt objects."
+    "answer": "KMS has a 4KB limit for direct encryption; use envelope encryption with GenerateDataKey",
+    "explanation": "KMS has a 4KB limit for data encrypted directly via the Encrypt API. For larger data, use envelope encryption: call GenerateDataKey to get a data encryption key (DEK), encrypt the 50GB file locally with the DEK, store the encrypted DEK alongside the encrypted file, and delete the plaintext DEK. To decrypt, send the encrypted DEK to KMS to get the plaintext DEK, then decrypt the file locally.",
+    "why_not": {
+      "KMS requires Shield Advanced for large files": "Shield is for DDoS protection and has no relationship to KMS or encryption. Shield Advanced doesn't affect KMS capabilities or limits. The 4KB limit exists regardless of Shield. This is a fundamental misunderstanding of these services' purposes.",
+      "The KMS key needs to be in the same region as S3": "While KMS keys are regional and should generally be in the same region as the resources using them, this isn't the issue here. Even with the key in the correct region, the 4KB limit still applies. Regional placement affects latency and compliance, not the encryption size limit.",
+      "KMS can only encrypt data in transit, not at rest": "This is completely incorrect. KMS is specifically designed for encrypting data at rest. It's used by S3, EBS, RDS, and many other services for encryption at rest. KMS doesn't encrypt data in transit—that's handled by TLS/SSL. The issue is the 4KB size limit, not the encryption type."
+    }
   },
   {
     "id": "d5-q3",
     "domain": "data-protection",
     "type": "single",
-    "difficulty": "easy",
-    "question": "A company needs to automatically rotate database credentials every 30 days. Which AWS service should they use?",
+    "difficulty": "medium",
+    "question": "A company stores database credentials in AWS and needs them to automatically rotate every 30 days. The credentials are for an RDS MySQL database. Which service should they use?",
     "choices": [
-      "AWS Secrets Manager",
+      "AWS Secrets Manager with automatic rotation",
       "AWS Systems Manager Parameter Store",
       "AWS KMS",
-      "AWS IAM"
+      "Amazon S3 with versioning"
     ],
-    "answer": "AWS Secrets Manager",
-    "explanation": "AWS Secrets Manager provides automatic rotation of secrets on a configurable schedule and has native integration with RDS, Redshift, and DocumentDB for rotating database credentials."
+    "answer": "AWS Secrets Manager with automatic rotation",
+    "explanation": "AWS Secrets Manager is specifically designed for secret rotation and has built-in support for automatic rotation of RDS database credentials (MySQL, PostgreSQL, Aurora, etc.). You can configure rotation schedules (e.g., every 30 days), and Secrets Manager handles the entire process: creating new credentials, updating the database, and retiring old credentials.",
+    "why_not": {
+      "AWS Systems Manager Parameter Store": "Parameter Store can store secrets (as SecureString parameters) but doesn't provide automatic rotation capabilities. You'd need to build custom rotation logic with Lambda. Parameter Store is better for static configuration and secrets that don't need rotation. For rotating secrets, Secrets Manager is the purpose-built solution.",
+      "AWS KMS": "KMS is for managing encryption keys, not application secrets like database credentials. While Secrets Manager uses KMS to encrypt secrets at rest, KMS itself doesn't store or rotate database credentials. KMS is for cryptographic keys, not application secrets.",
+      "Amazon S3 with versioning": "S3 is an object storage service, not a secrets management service. While you could store credentials in S3, it doesn't provide automatic rotation, fine-grained access control via IAM for secrets, or integration with RDS for credential updates. S3 versioning tracks object changes but doesn't rotate secrets."
+    }
   },
   {
     "id": "d5-q4",
     "domain": "data-protection",
     "type": "single",
-    "difficulty": "medium",
-    "question": "What is the difference between AWS managed keys and customer managed keys in KMS?",
+    "difficulty": "easy",
+    "question": "A company needs the simplest S3 encryption option with no additional cost and no key management overhead. Which encryption option should they choose?",
     "choices": [
-      "Customer managed keys provide full control over key policies and rotation",
-      "AWS managed keys are more secure than customer managed keys",
-      "Customer managed keys cannot be rotated",
-      "AWS managed keys can be used across regions"
+      "SSE-S3 (Server-Side Encryption with S3-Managed Keys)",
+      "SSE-KMS (Server-Side Encryption with KMS Keys)",
+      "SSE-C (Server-Side Encryption with Customer-Provided Keys)",
+      "Client-side encryption"
     ],
-    "answer": "Customer managed keys provide full control over key policies and rotation",
-    "explanation": "Customer managed keys (CMKs) give you full control over key policies, rotation schedules, and key usage. AWS managed keys are created and managed by AWS services with limited control."
+    "answer": "SSE-S3 (Server-Side Encryption with S3-Managed Keys)",
+    "explanation": "SSE-S3 is the simplest encryption option where S3 manages all encryption keys automatically using AES-256. There's no additional cost beyond S3 storage, no key management required, and encryption/decryption happens transparently. It's the default encryption option for S3 and requires minimal configuration.",
+    "why_not": {
+      "SSE-KMS (Server-Side Encryption with KMS Keys)": "SSE-KMS provides additional features like audit trails and key policies but has additional costs for KMS API calls (encrypt/decrypt operations). It also requires managing KMS keys and policies. While more powerful, it's not the simplest option and has additional costs.",
+      "SSE-C (Server-Side Encryption with Customer-Provided Keys)": "SSE-C requires you to provide the encryption key with every PUT and GET request, manage keys outside AWS, and use HTTPS for all requests. This is significantly more complex than SSE-S3 and requires building key management infrastructure. Not the simplest option.",
+      "Client-side encryption": "Client-side encryption requires you to encrypt data before uploading to S3 and manage the entire encryption process, including key management, rotation, and decryption logic in your applications. This is the most complex option and has the most overhead."
+    }
   },
   {
     "id": "d5-q5",
     "domain": "data-protection",
     "type": "single",
-    "difficulty": "easy",
-    "question": "Which AWS service provides free SSL/TLS certificates with automatic renewal?",
+    "difficulty": "hard",
+    "question": "A financial institution must maintain single-tenant Hardware Security Modules (HSMs) for regulatory compliance. They need to export encryption keys to use in on-premises systems and require FIPS 140-2 Level 3 validation. Which AWS service meets these requirements?",
     "choices": [
-      "AWS Certificate Manager (ACM)",
+      "AWS CloudHSM",
       "AWS KMS",
       "AWS Secrets Manager",
-      "AWS CloudHSM"
+      "AWS Certificate Manager"
     ],
-    "answer": "AWS Certificate Manager (ACM)",
-    "explanation": "ACM provides free public SSL/TLS certificates for use with AWS services like CloudFront, ALB, and API Gateway, with automatic renewal to prevent expiration."
+    "answer": "AWS CloudHSM",
+    "explanation": "AWS CloudHSM provides single-tenant HSMs dedicated to your VPC with FIPS 140-2 Level 3 validation. Unlike KMS, CloudHSM allows you to export keys for use outside AWS, giving you full control over key lifecycle. You manage the HSM and keys, while AWS manages the hardware. This meets the regulatory requirements for single-tenant HSMs and key portability.",
+    "why_not": {
+      "AWS KMS": "KMS uses multi-tenant HSMs (FIPS 140-2 Level 2) where multiple customers share the same hardware with logical isolation. KMS keys cannot be exported—they never leave AWS unencrypted. If regulations require single-tenant HSMs or key export capability, KMS doesn't meet these requirements.",
+      "AWS Secrets Manager": "Secrets Manager is for storing and rotating application secrets like database credentials and API keys, not for cryptographic key management or HSM operations. It uses KMS for encryption but doesn't provide HSM access or key export capabilities. Wrong service for this use case.",
+      "AWS Certificate Manager": "ACM manages SSL/TLS certificates for AWS services, not encryption keys for data encryption. While ACM uses cryptographic operations, it doesn't provide HSM access, key export, or general-purpose encryption key management. It's specifically for certificates, not encryption keys."
+    }
   },
   {
     "id": "d5-q6",
     "domain": "data-protection",
-    "type": "multiple",
-    "difficulty": "medium",
-    "question": "Which of the following S3 encryption methods encrypt data on the server side? (Select all that apply)",
-    "choices": [
-      "SSE-S3",
-      "SSE-KMS",
-      "SSE-C",
-      "Client-side encryption with KMS",
-      "Client-side encryption with customer keys"
-    ],
-    "answer": ["SSE-S3", "SSE-KMS", "SSE-C"],
-    "explanation": "SSE-S3, SSE-KMS, and SSE-C are all server-side encryption methods where S3 encrypts the data after receiving it. Client-side encryption methods encrypt data before sending to S3."
-  },
-  {
-    "id": "d5-q7",
-    "domain": "data-protection",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A company needs to enforce that all S3 objects must be encrypted with a specific KMS key. How should they implement this?",
-    "choices": [
-      "Create a bucket policy that denies PutObject unless the request specifies the required KMS key",
-      "Enable default encryption on the bucket",
-      "Use AWS Config to detect unencrypted objects",
-      "Encryption cannot be enforced"
-    ],
-    "answer": "Create a bucket policy that denies PutObject unless the request specifies the required KMS key",
-    "explanation": "A bucket policy with a Deny effect for PutObject requests that don't specify the required KMS key (using s3:x-amz-server-side-encryption-aws-kms-key-id condition) enforces encryption with a specific key."
-  },
-  {
-    "id": "d5-q8",
-    "domain": "data-protection",
     "type": "single",
     "difficulty": "medium",
-    "question": "What is the maximum size of data that can be encrypted directly using KMS Encrypt API?",
+    "question": "A company wants to ensure that deleted S3 objects can be recovered and that objects cannot be permanently deleted for 90 days, even by users with delete permissions. This is required for ransomware protection. What combination of S3 features should they enable?",
     "choices": [
-      "4 KB",
-      "1 MB",
-      "10 MB",
-      "Unlimited"
+      "S3 Versioning and S3 Object Lock in compliance mode",
+      "S3 Versioning only",
+      "S3 Object Lock in governance mode",
+      "S3 Cross-Region Replication"
     ],
-    "answer": "4 KB",
-    "explanation": "The KMS Encrypt API can directly encrypt up to 4 KB of data. For larger data, you should use envelope encryption with data keys generated by KMS GenerateDataKey."
-  },
-  {
-    "id": "d5-q9",
-    "domain": "data-protection",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A company needs to share encrypted S3 objects with a partner AWS account. The objects are encrypted with SSE-KMS. What must be configured?",
-    "choices": [
-      "Grant the partner account access in both the S3 bucket policy and the KMS key policy",
-      "Only the S3 bucket policy needs to be updated",
-      "Only the KMS key policy needs to be updated",
-      "Re-encrypt objects with SSE-S3 before sharing"
-    ],
-    "answer": "Grant the partner account access in both the S3 bucket policy and the KMS key policy",
-    "explanation": "For cross-account access to SSE-KMS encrypted objects, you must grant permissions in both the S3 bucket policy (for object access) and the KMS key policy (for decryption)."
-  },
-  {
-    "id": "d5-q10",
-    "domain": "data-protection",
-    "type": "single",
-    "difficulty": "medium",
-    "question": "When should you use AWS Secrets Manager instead of Systems Manager Parameter Store?",
-    "choices": [
-      "When you need automatic secret rotation",
-      "When you need to store configuration parameters",
-      "When you need the lowest cost option",
-      "When you need to store more than 10,000 parameters"
-    ],
-    "answer": "When you need automatic secret rotation",
-    "explanation": "Secrets Manager is designed for secrets with automatic rotation capabilities and native integration with databases. Parameter Store is better for configuration data and is more cost-effective for simple use cases."
-  },
-  {
-    "id": "d5-q11",
-    "domain": "data-protection",
-    "type": "single",
-    "difficulty": "easy",
-    "question": "What type of encryption does AWS KMS primarily use?",
-    "choices": [
-      "Symmetric encryption (AES-256)",
-      "Asymmetric encryption (RSA)",
-      "Both symmetric and asymmetric",
-      "No encryption, only key management"
-    ],
-    "answer": "Both symmetric and asymmetric",
-    "explanation": "KMS supports both symmetric keys (AES-256) for encryption/decryption and asymmetric keys (RSA and ECC) for encryption or signing operations."
-  },
-  {
-    "id": "d5-q12",
-    "domain": "data-protection",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A company wants to ensure that deleted KMS keys cannot be used, but they want to recover them if deletion was accidental. What should they do?",
-    "choices": [
-      "Schedule key deletion with a waiting period (7-30 days)",
-      "Disable the key immediately",
-      "Delete the key immediately",
-      "KMS keys cannot be deleted"
-    ],
-    "answer": "Schedule key deletion with a waiting period (7-30 days)",
-    "explanation": "KMS key deletion is scheduled with a mandatory waiting period (7-30 days). During this period, the key cannot be used but can be recovered if needed. This prevents accidental permanent deletion."
-  },
-  {
-    "id": "d5-q13",
-    "domain": "data-protection",
-    "type": "multiple",
-    "difficulty": "medium",
-    "question": "Which AWS services support encryption at rest using KMS? (Select all that apply)",
-    "choices": [
-      "Amazon S3",
-      "Amazon EBS",
-      "Amazon RDS",
-      "Amazon EC2 instance store",
-      "AWS Lambda environment variables"
-    ],
-    "answer": ["Amazon S3", "Amazon EBS", "Amazon RDS", "AWS Lambda environment variables"],
-    "explanation": "S3, EBS, RDS, and Lambda environment variables all support KMS encryption. EC2 instance store is ephemeral storage that doesn't support encryption at rest."
-  },
-  {
-    "id": "d5-q14",
-    "domain": "data-protection",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A security engineer needs to grant a Lambda function permission to decrypt data using a KMS key. Where should this permission be granted?",
-    "choices": [
-      "In both the Lambda execution role and the KMS key policy",
-      "Only in the Lambda execution role",
-      "Only in the KMS key policy",
-      "KMS keys don't require explicit permissions"
-    ],
-    "answer": "In both the Lambda execution role and the KMS key policy",
-    "explanation": "For a Lambda function to use a KMS key, the Lambda execution role must have kms:Decrypt permission, and the KMS key policy must allow the role to use the key. Both are required."
-  },
-  {
-    "id": "d5-q15",
-    "domain": "data-protection",
-    "type": "single",
-    "difficulty": "medium",
-    "question": "What happens to encrypted EBS volumes when an EC2 instance is stopped and started?",
-    "choices": [
-      "They remain encrypted with the same key",
-      "They are automatically decrypted",
-      "They are re-encrypted with a new key",
-      "Encryption is lost"
-    ],
-    "answer": "They remain encrypted with the same key",
-    "explanation": "EBS encryption is persistent. Encrypted volumes remain encrypted throughout their lifecycle, including when instances are stopped and started. The same KMS key is used unless you explicitly re-encrypt."
-  },
-  {
-    "id": "d5-q16",
-    "domain": "data-protection",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A company stores sensitive data in S3 encrypted with SSE-KMS. They want to prevent anyone, including AWS, from accessing the plaintext data. Is this possible?",
-    "choices": [
-      "No, AWS manages the encryption infrastructure and could theoretically access data",
-      "Yes, by using SSE-C with customer-provided keys",
-      "Yes, SSE-KMS prevents all AWS access",
-      "Yes, by using client-side encryption only"
-    ],
-    "answer": "No, AWS manages the encryption infrastructure and could theoretically access data",
-    "explanation": "With SSE-KMS, AWS manages the encryption infrastructure. For complete control where AWS cannot access plaintext, use client-side encryption or SSE-C where you manage and provide the encryption keys."
-  },
-  {
-    "id": "d5-q17",
-    "domain": "data-protection",
-    "type": "single",
-    "difficulty": "medium",
-    "question": "How often does AWS KMS automatically rotate customer managed symmetric keys when automatic rotation is enabled?",
-    "choices": [
-      "Every 365 days (1 year)",
-      "Every 90 days",
-      "Every 30 days",
-      "Automatic rotation is not available"
-    ],
-    "answer": "Every 365 days (1 year)",
-    "explanation": "When automatic key rotation is enabled for customer managed symmetric KMS keys, AWS rotates the key material every 365 days. The key ID remains the same, but the cryptographic material changes."
-  },
-  {
-    "id": "d5-q18",
-    "domain": "data-protection",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A company wants to enforce encryption in transit for all S3 API calls. How should they implement this?",
-    "choices": [
-      "Create a bucket policy that denies requests where aws:SecureTransport is false",
-      "Enable S3 default encryption",
-      "Use SSE-KMS",
-      "Encryption in transit is automatic and cannot be enforced"
-    ],
-    "answer": "Create a bucket policy that denies requests where aws:SecureTransport is false",
-    "explanation": "A bucket policy with Deny effect when aws:SecureTransport condition is false enforces that all requests must use HTTPS (TLS/SSL), ensuring encryption in transit."
-  },
-  {
-    "id": "d5-q19",
-    "domain": "data-protection",
-    "type": "multiple",
-    "difficulty": "medium",
-    "question": "Which of the following can be stored in AWS Secrets Manager? (Select all that apply)",
-    "choices": [
-      "Database credentials",
-      "API keys",
-      "OAuth tokens",
-      "Large binary files (>10 MB)",
-      "SSH private keys"
-    ],
-    "answer": ["Database credentials", "API keys", "OAuth tokens", "SSH private keys"],
-    "explanation": "Secrets Manager can store database credentials, API keys, OAuth tokens, and SSH keys. It has a size limit of 65,536 bytes per secret, so large binary files cannot be stored."
-  },
-  {
-    "id": "d5-q20",
-    "domain": "data-protection",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A company has encrypted EBS volumes with a KMS key. They want to share snapshots of these volumes with another AWS account. What must they do?",
-    "choices": [
-      "Share the snapshot and grant the other account permission to use the KMS key",
-      "Only share the snapshot",
-      "Re-encrypt with SSE-S3 before sharing",
-      "Encrypted snapshots cannot be shared"
-    ],
-    "answer": "Share the snapshot and grant the other account permission to use the KMS key",
-    "explanation": "To share encrypted EBS snapshots, you must share the snapshot itself and grant the target account permission to use the KMS key in the key policy. Both permissions are required."
+    "answer": "S3 Versioning and S3 Object Lock in compliance mode",
+    "explanation": "S3 Versioning preserves all versions of objects, allowing recovery of deleted objects. S3 Object Lock in compliance mode prevents any user (including root) from deleting or modifying objects for the specified retention period (90 days). This combination provides ransomware protection by making objects immutable and recoverable.",
+    "why_not": {
+      "S3 Versioning only": "Versioning allows recovery of deleted objects, but it doesn't prevent permanent deletion. Users with appropriate permissions can still delete all versions of an object. Versioning alone doesn't provide the immutability guarantee needed for ransomware protection—you need Object Lock for that.",
+      "S3 Object Lock in governance mode": "Governance mode allows users with special permissions (s3:BypassGovernanceRetention) to override retention and delete objects. This doesn't meet the requirement that objects cannot be deleted even by users with delete permissions. Compliance mode is needed for strict immutability.",
+      "S3 Cross-Region Replication": "CRR copies objects to another region for disaster recovery but doesn't prevent deletion in the source bucket. If objects are deleted or encrypted by ransomware in the source, CRR would replicate those changes to the destination. You need Object Lock for immutability, not just replication."
+    }
   }
 ]

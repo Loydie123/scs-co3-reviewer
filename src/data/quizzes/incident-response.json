@@ -3,227 +3,140 @@
     "id": "d2-q1",
     "domain": "incident-response",
     "type": "single",
-    "difficulty": "medium",
-    "question": "A security team needs to automatically isolate an EC2 instance when GuardDuty detects suspicious activity. Which combination of services should they use?",
+    "difficulty": "hard",
+    "question": "A GuardDuty finding indicates that an EC2 instance is compromised and communicating with a command-and-control server. The security team needs to preserve forensic evidence while preventing further damage. What should be the FIRST action?",
     "choices": [
-      "GuardDuty + EventBridge + Lambda",
-      "GuardDuty + SNS + CloudWatch",
-      "Security Hub + Config + Systems Manager",
-      "CloudTrail + CloudWatch Alarms + SNS"
+      "Take an EBS snapshot of the instance volumes before any other action",
+      "Terminate the instance immediately",
+      "Modify the security group to block all traffic",
+      "Run antivirus software on the instance"
     ],
-    "answer": "GuardDuty + EventBridge + Lambda",
-    "explanation": "GuardDuty findings can trigger EventBridge rules, which invoke Lambda functions to automatically isolate instances by modifying security groups or moving them to isolated subnets."
+    "answer": "Take an EBS snapshot of the instance volumes before any other action",
+    "explanation": "Preserving evidence is critical for forensic investigation and should be done before any remediation that might alter or destroy evidence. Taking an EBS snapshot captures the exact state of the compromised instance, including malware, logs, and attacker artifacts. After the snapshot, you can isolate or terminate the instance. This follows the forensic principle of evidence preservation.",
+    "why_not": {
+      "Terminate the instance immediately": "Terminating the instance destroys evidence that could be crucial for understanding how the compromise occurred, what data was accessed, and preventing future incidents. Always preserve evidence (snapshots) before termination. Termination should come after containment and evidence collection.",
+      "Modify the security group to block all traffic": "While isolation is important for containment, modifying the security group before taking snapshots could alert the attacker and trigger destructive actions. Additionally, changing the security group modifies the environment, potentially affecting forensic analysis. Take snapshots first to preserve the exact state.",
+      "Run antivirus software on the instance": "Running antivirus or any remediation tools on a compromised instance can modify files, timestamps, and system state, destroying forensic evidence. Antivirus might also fail to detect sophisticated malware. The correct approach is to snapshot first, then analyze in an isolated forensic environment."
+    }
   },
   {
     "id": "d2-q2",
     "domain": "incident-response",
     "type": "single",
-    "difficulty": "easy",
-    "question": "During a security incident investigation, what is the BEST way to preserve forensic evidence from a compromised EC2 instance?",
+    "difficulty": "medium",
+    "question": "A company wants to automate the response when GuardDuty detects an EC2 instance credential exfiltration attempt. The automated response should isolate the instance, send notifications to the security team, and create a support ticket. What is the BEST architecture for this automation?",
     "choices": [
-      "Create an EBS snapshot before taking any action",
-      "Immediately terminate the instance",
-      "Reboot the instance to clear memory",
-      "Run antivirus software on the instance"
+      "EventBridge rule triggered by GuardDuty finding that invokes Lambda function",
+      "CloudWatch Alarm that triggers SNS notification",
+      "AWS Config rule with automatic remediation",
+      "Security Hub custom action"
     ],
-    "answer": "Create an EBS snapshot before taking any action",
-    "explanation": "Taking an EBS snapshot preserves the disk state for forensic analysis without disrupting the evidence. This should be done before containment or remediation actions."
+    "answer": "EventBridge rule triggered by GuardDuty finding that invokes Lambda function",
+    "explanation": "GuardDuty publishes findings to EventBridge as events. You can create an EventBridge rule that matches specific finding types (like UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration) and triggers a Lambda function. The Lambda function can then isolate the instance (modify security group), send SNS notifications, and create support tickets via API calls. This provides real-time automated response.",
+    "why_not": {
+      "CloudWatch Alarm that triggers SNS notification": "CloudWatch Alarms work with metrics, not events. GuardDuty findings are events, not metrics. While you could create custom metrics from findings, this adds complexity and latency. EventBridge is the native integration point for GuardDuty findings and provides direct event-driven automation.",
+      "AWS Config rule with automatic remediation": "Config rules evaluate resource configurations (like 'is encryption enabled'), not security findings from GuardDuty. Config doesn't integrate with GuardDuty findings for automated response. Config is for configuration compliance, not threat response automation.",
+      "Security Hub custom action": "While Security Hub can aggregate GuardDuty findings and trigger custom actions, it's an additional layer that adds latency. For automated response, it's more efficient to trigger directly from GuardDuty via EventBridge. Security Hub is better for manual investigation and response workflows."
+    }
   },
   {
     "id": "d2-q3",
     "domain": "incident-response",
     "type": "single",
     "difficulty": "easy",
-    "question": "Which AWS service provides pre-built automation documents for common incident response tasks?",
+    "question": "A developer accidentally commits AWS access keys to a public GitHub repository. What should be the immediate first response?",
     "choices": [
-      "AWS Systems Manager Automation",
-      "AWS Lambda",
-      "AWS Step Functions",
-      "AWS Config"
+      "Delete or deactivate the exposed access keys immediately",
+      "Review CloudTrail logs to see what was accessed",
+      "Rotate all credentials in the account",
+      "Enable GuardDuty to detect unauthorized usage"
     ],
-    "answer": "AWS Systems Manager Automation",
-    "explanation": "Systems Manager Automation provides pre-built runbooks (automation documents) for common remediation tasks like isolating instances, revoking credentials, and collecting forensic data."
+    "answer": "Delete or deactivate the exposed access keys immediately",
+    "explanation": "The first priority is to revoke the compromised credentials to prevent further unauthorized access. Every second counts—exposed keys on public repositories are often discovered and exploited within minutes by automated scanners. After revoking the keys, you can investigate the impact via CloudTrail and take additional remediation steps.",
+    "why_not": {
+      "Review CloudTrail logs to see what was accessed": "While reviewing CloudTrail is important for assessing damage, it should be done after revoking the compromised credentials. If you investigate first, the attacker can continue using the exposed keys to access resources or exfiltrate data. Stop the bleeding first, then assess the damage.",
+      "Rotate all credentials in the account": "Rotating all credentials is a good precautionary measure but should come after immediately revoking the specific exposed keys. The exposed keys pose an immediate threat that must be addressed first. Rotating all credentials is part of the broader response but not the first action.",
+      "Enable GuardDuty to detect unauthorized usage": "GuardDuty is valuable for detection, but if it wasn't already enabled, enabling it now doesn't stop the immediate threat of exposed credentials. The first action must be to revoke the compromised keys. GuardDuty should be enabled as part of preparation (before incidents), not as first response."
+    }
   },
   {
     "id": "d2-q4",
     "domain": "incident-response",
     "type": "single",
-    "difficulty": "medium",
-    "question": "A company needs to quickly revoke all active sessions for a compromised IAM user. What should they do?",
+    "difficulty": "hard",
+    "question": "A security team needs to investigate a GuardDuty finding showing unusual API activity. They need to understand the full timeline of events, identify related resources, and visualize relationships between users, roles, and resources involved. Which service provides these investigation capabilities?",
     "choices": [
-      "Delete the IAM user's access keys and attach an explicit deny policy",
-      "Only delete the access keys",
-      "Change the user's password",
-      "Disable the user's MFA device"
+      "Amazon Detective",
+      "AWS CloudTrail",
+      "AWS Security Hub",
+      "Amazon GuardDuty"
     ],
-    "answer": "Delete the IAM user's access keys and attach an explicit deny policy",
-    "explanation": "Deleting access keys stops new API calls, but existing sessions may remain active. Attaching an explicit deny policy immediately revokes all permissions for active sessions."
+    "answer": "Amazon Detective",
+    "explanation": "Amazon Detective automatically collects log data from CloudTrail, VPC Flow Logs, and GuardDuty, then uses machine learning and graph analysis to create visualizations of relationships between resources, users, and activities. It helps answer 'how did this happen' and 'what's the full impact' by showing the complete timeline and context around security findings.",
+    "why_not": {
+      "AWS CloudTrail": "CloudTrail provides the raw API call logs needed for investigation, but analyzing them manually is time-consuming and doesn't provide the automated correlation, visualization, and context that Detective offers. You'd need to manually query and piece together the timeline from potentially millions of log entries.",
+      "AWS Security Hub": "Security Hub aggregates the GuardDuty finding and provides context about overall security posture, but it doesn't provide investigation capabilities or root cause analysis. It shows you what findings exist and their severity, but not the detailed timeline, relationships, and context needed for investigation.",
+      "Amazon GuardDuty": "GuardDuty detected the unusual activity and generated the finding, but it doesn't provide investigation tools. GuardDuty tells you something suspicious happened, but Detective tells you how it happened, what led to it, and what the full impact is. They're complementary services."
+    }
   },
   {
     "id": "d2-q5",
     "domain": "incident-response",
     "type": "single",
     "difficulty": "medium",
-    "question": "What is the PRIMARY purpose of CloudTrail log file validation in incident response?",
+    "question": "A company needs to provide secure shell access to EC2 instances for incident investigation without opening SSH port 22 or managing SSH keys. All session activity must be logged for audit purposes. What is the BEST solution?",
     "choices": [
-      "To verify that log files have not been tampered with after delivery",
-      "To compress log files for storage efficiency",
-      "To encrypt log files at rest",
-      "To automatically delete old log files"
+      "AWS Systems Manager Session Manager",
+      "EC2 Instance Connect",
+      "SSH with bastion host",
+      "AWS Direct Connect with VPN"
     ],
-    "answer": "To verify that log files have not been tampered with after delivery",
-    "explanation": "CloudTrail log file validation creates a digital signature for each log file, allowing you to verify that the logs have not been modified or deleted after CloudTrail delivered them."
+    "answer": "AWS Systems Manager Session Manager",
+    "explanation": "Session Manager provides secure browser-based or CLI shell access to EC2 instances without requiring open inbound ports (like SSH port 22) or SSH key management. All session activity is logged to CloudTrail and can be recorded to S3 for audit purposes. It uses IAM policies for access control, making it ideal for secure incident investigation.",
+    "why_not": {
+      "EC2 Instance Connect": "EC2 Instance Connect still requires SSH port 22 to be open in the security group, which increases attack surface. While it pushes temporary SSH keys, it doesn't eliminate the need for open SSH ports. Session Manager is more secure because it doesn't require any open inbound ports.",
+      "SSH with bastion host": "Traditional SSH with bastion hosts requires managing SSH keys, keeping bastion hosts patched and secure, and opening SSH port 22 on both the bastion and target instances. This increases complexity and attack surface. Session Manager eliminates these requirements and provides better audit logging.",
+      "AWS Direct Connect with VPN": "Direct Connect provides dedicated network connection from on-premises to AWS, but it doesn't solve the SSH access problem. You'd still need to open SSH ports and manage keys. Direct Connect is for network connectivity, not for secure instance access or session management."
+    }
   },
   {
     "id": "d2-q6",
     "domain": "incident-response",
-    "type": "multiple",
+    "type": "single",
     "difficulty": "hard",
-    "question": "A compromised EC2 instance needs to be isolated for forensic analysis. Which actions should be taken? (Select all that apply)",
+    "question": "During a security incident, the team needs to ensure CloudTrail logs have not been tampered with by the attacker. They need cryptographic proof that logs are unmodified since delivery. What CloudTrail feature provides this capability?",
     "choices": [
-      "Create an EBS snapshot of the instance volumes",
-      "Modify the security group to deny all inbound and outbound traffic",
-      "Create a memory dump if possible",
-      "Immediately terminate the instance",
-      "Tag the instance as 'compromised'"
+      "CloudTrail log file validation",
+      "S3 bucket versioning",
+      "CloudTrail Insights",
+      "S3 Object Lock"
     ],
-    "answer": ["Create an EBS snapshot of the instance volumes", "Modify the security group to deny all inbound and outbound traffic", "Create a memory dump if possible", "Tag the instance as 'compromised'"],
-    "explanation": "Proper isolation includes preserving evidence (snapshots, memory dumps), isolating network access (security groups), and marking the instance (tags). Terminating immediately destroys evidence."
+    "answer": "CloudTrail log file validation",
+    "explanation": "CloudTrail log file validation creates a digitally signed digest file for every log file using SHA-256 hashing. This allows you to cryptographically verify that log files haven't been modified, deleted, or forged after CloudTrail delivered them. The digest files are chained together, making tampering detectable. This is specifically designed for log integrity verification.",
+    "why_not": {
+      "S3 bucket versioning": "Versioning allows you to recover previous versions of objects if they're modified or deleted, but it doesn't provide cryptographic proof of integrity. An attacker with sufficient permissions could modify an object and its versions. Versioning is for recovery, not for proving integrity.",
+      "CloudTrail Insights": "Insights detects unusual API activity patterns (like sudden spikes in API calls) to identify anomalies. It's for behavioral analysis and anomaly detection, not for verifying log file integrity. Insights helps detect unusual activity but doesn't validate that logs haven't been tampered with.",
+      "S3 Object Lock": "Object Lock prevents deletion or modification of objects for a specified retention period, which helps protect logs from tampering. However, it doesn't provide cryptographic proof that logs haven't been tampered with before Object Lock was applied. Log file validation provides the cryptographic verification."
+    }
   },
   {
     "id": "d2-q7",
     "domain": "incident-response",
     "type": "single",
     "difficulty": "medium",
-    "question": "Which AWS service can automatically execute remediation actions based on Security Hub findings?",
+    "question": "A company's S3 bucket containing sensitive customer data was accidentally made public. The security team needs to immediately block public access and then determine if any data was downloaded. What should they do?",
     "choices": [
-      "EventBridge with Lambda",
-      "AWS Config only",
-      "CloudWatch Alarms",
-      "GuardDuty"
+      "Enable S3 Block Public Access immediately, then review S3 server access logs",
+      "Review S3 server access logs first, then block public access",
+      "Delete the bucket immediately",
+      "Enable S3 versioning to track access"
     ],
-    "answer": "EventBridge with Lambda",
-    "explanation": "Security Hub sends findings to EventBridge, which can trigger Lambda functions to execute automated remediation actions based on finding types and severity."
-  },
-  {
-    "id": "d2-q8",
-    "domain": "incident-response",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "During an incident, a security team discovers that an attacker has created multiple IAM users. What is the FASTEST way to identify all resources created by these users?",
-    "choices": [
-      "Query CloudTrail logs for API calls made by the compromised users",
-      "Use AWS Config to list all resources",
-      "Check the AWS Console manually",
-      "Use IAM Access Analyzer"
-    ],
-    "answer": "Query CloudTrail logs for API calls made by the compromised users",
-    "explanation": "CloudTrail logs contain all API activity including the identity that made each call. Querying CloudTrail (using CloudTrail Lake or Athena) is the fastest way to identify all actions taken by specific users."
-  },
-  {
-    "id": "d2-q9",
-    "domain": "incident-response",
-    "type": "single",
-    "difficulty": "medium",
-    "question": "What is the recommended approach for storing forensic evidence from security incidents?",
-    "choices": [
-      "Store in a separate AWS account with restricted access",
-      "Store in the same account as the incident",
-      "Store on the compromised instance",
-      "Store in CloudWatch Logs only"
-    ],
-    "answer": "Store in a separate AWS account with restricted access",
-    "explanation": "Forensic evidence should be stored in a separate, secured account to prevent tampering by attackers who may have compromised the original account. This follows the principle of evidence preservation."
-  },
-  {
-    "id": "d2-q10",
-    "domain": "incident-response",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A company's AWS account has been compromised and the attacker has root user access. What should be the FIRST priority?",
-    "choices": [
-      "Rotate root user credentials and enable MFA",
-      "Delete all IAM users",
-      "Terminate all EC2 instances",
-      "Disable all security groups"
-    ],
-    "answer": "Rotate root user credentials and enable MFA",
-    "explanation": "If root credentials are compromised, the attacker has full control. The first priority is to rotate root credentials and enable MFA to prevent further access. Then assess and contain the damage."
-  },
-  {
-    "id": "d2-q11",
-    "domain": "incident-response",
-    "type": "single",
-    "difficulty": "easy",
-    "question": "What is the purpose of an incident response runbook?",
-    "choices": [
-      "To provide step-by-step procedures for handling specific incident types",
-      "To store incident logs",
-      "To automatically remediate all incidents",
-      "To prevent incidents from occurring"
-    ],
-    "answer": "To provide step-by-step procedures for handling specific incident types",
-    "explanation": "Runbooks document standardized procedures for responding to specific types of incidents, ensuring consistent and effective response across the team."
-  },
-  {
-    "id": "d2-q12",
-    "domain": "incident-response",
-    "type": "single",
-    "difficulty": "medium",
-    "question": "A Lambda function needs to automatically revoke an IAM user's permissions when suspicious activity is detected. What is the MOST effective approach?",
-    "choices": [
-      "Attach an explicit deny-all policy to the user",
-      "Delete the IAM user immediately",
-      "Change the user's password",
-      "Remove the user from all groups"
-    ],
-    "answer": "Attach an explicit deny-all policy to the user",
-    "explanation": "Attaching an explicit deny-all policy immediately revokes all permissions for the user, including active sessions. This is faster and more effective than deleting the user, which may fail if the user has dependencies."
-  },
-  {
-    "id": "d2-q13",
-    "domain": "incident-response",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "During incident response, a security team needs to analyze network traffic from a compromised EC2 instance. VPC Flow Logs are enabled but the team needs more detailed packet-level analysis. What should they do?",
-    "choices": [
-      "Deploy a network packet capture tool on a separate instance in the same subnet",
-      "VPC Flow Logs provide packet-level details",
-      "Use GuardDuty for packet analysis",
-      "Enable CloudTrail data events"
-    ],
-    "answer": "Deploy a network packet capture tool on a separate instance in the same subnet",
-    "explanation": "VPC Flow Logs only capture metadata (source/destination IPs, ports, protocol). For packet-level analysis, you need to deploy packet capture tools like tcpdump or use Traffic Mirroring to copy traffic to an analysis instance."
-  },
-  {
-    "id": "d2-q14",
-    "domain": "incident-response",
-    "type": "multiple",
-    "difficulty": "medium",
-    "question": "Which of the following are important considerations when containing a security incident? (Select all that apply)",
-    "choices": [
-      "Preserve evidence for forensic analysis",
-      "Minimize impact on business operations",
-      "Document all containment actions taken",
-      "Immediately delete all affected resources",
-      "Isolate affected systems from the network"
-    ],
-    "answer": ["Preserve evidence for forensic analysis", "Minimize impact on business operations", "Document all containment actions taken", "Isolate affected systems from the network"],
-    "explanation": "Effective containment balances evidence preservation, business continuity, documentation, and isolation. Immediately deleting resources destroys evidence and should be avoided."
-  },
-  {
-    "id": "d2-q15",
-    "domain": "incident-response",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A company discovers that an attacker has created a backdoor Lambda function that exfiltrates data. The function is triggered by S3 events. What is the MOST comprehensive remediation approach?",
-    "choices": [
-      "Delete the Lambda function, remove S3 event trigger, review CloudTrail for other backdoors, rotate credentials",
-      "Only delete the Lambda function",
-      "Disable the S3 bucket",
-      "Delete the entire AWS account"
-    ],
-    "answer": "Delete the Lambda function, remove S3 event trigger, review CloudTrail for other backdoors, rotate credentials",
-    "explanation": "Comprehensive remediation requires removing the backdoor, eliminating triggers, investigating for additional compromises via CloudTrail, and rotating potentially compromised credentials."
+    "answer": "Enable S3 Block Public Access immediately, then review S3 server access logs",
+    "explanation": "The first priority is containment—block public access immediately to prevent further data exposure. S3 Block Public Access can be enabled at the bucket or account level and takes effect immediately. After containment, review S3 server access logs to determine if anyone downloaded objects while the bucket was public. This follows the incident response principle: contain first, investigate second.",
+    "why_not": {
+      "Review S3 server access logs first, then block public access": "This prioritizes investigation over containment, allowing continued data exposure while you investigate. Every second the bucket remains public increases the risk of data exfiltration. The correct approach is to contain the breach immediately (block public access), then investigate the damage.",
+      "Delete the bucket immediately": "Deleting the bucket destroys evidence needed for investigation and may cause application outages if the data is still needed. You need to assess the situation, preserve evidence (logs, object metadata), and plan recovery. Deletion is too drastic and prevents proper incident investigation.",
+      "Enable S3 versioning to track access": "Versioning tracks object changes, not access. It doesn't block public access or show who accessed objects. For access tracking, you need S3 server access logs or CloudTrail data events. Versioning is useful for recovery but doesn't address the immediate need to contain the exposure."
+    }
   }
 ]
