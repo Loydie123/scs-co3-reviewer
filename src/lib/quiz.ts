@@ -1,8 +1,10 @@
 import type { Question, QuizState } from "@/types";
 
-export function initializeQuiz(questions: Question[]): QuizState {
+export function initializeQuiz(questions: Question[], shuffleAnswers: boolean = true): QuizState {
+  const processedQuestions = shuffleAnswers ? questions.map(shuffleQuestionChoices) : questions;
+  
   return {
-    questions,
+    questions: processedQuestions,
     currentIndex: 0,
     answers: {},
     isSubmitted: false,
@@ -16,6 +18,19 @@ export function shuffleQuestions(questions: Question[]): Question[] {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
+}
+
+export function shuffleQuestionChoices(question: Question): Question {
+  const shuffledChoices = [...question.choices];
+  for (let i = shuffledChoices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledChoices[i], shuffledChoices[j]] = [shuffledChoices[j], shuffledChoices[i]];
+  }
+  
+  return {
+    ...question,
+    choices: shuffledChoices,
+  };
 }
 
 export function answerQuestion(
@@ -83,4 +98,15 @@ export function getProgress(state: QuizState): {
   const percentage = total > 0 ? Math.round((answered / total) * 100) : 0;
 
   return { answered, total, percentage };
+}
+
+export function createReviewQuiz(incorrectQuestions: Question[]): QuizState {
+  return initializeQuiz(incorrectQuestions, false);
+}
+
+export function filterQuestionsByDifficulty(
+  questions: Question[],
+  difficulty: "easy" | "medium" | "hard"
+): Question[] {
+  return questions.filter((q) => q.difficulty === difficulty);
 }

@@ -19,6 +19,7 @@ export default function QuizPage() {
   const [quizState, setQuizState] = useState<QuizState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [difficultyFilter, setDifficultyFilter] = useState<"all" | "easy" | "medium" | "hard">("all");
 
   useEffect(() => {
     const loadSavedQuiz = () => {
@@ -69,18 +70,23 @@ export default function QuizPage() {
     let questions: Question[] = [];
 
     if (domainId === "mixed") {
-      questions = mixedQuiz as Question[];
+      questions = mixedQuiz as unknown as Question[];
     } else {
       const quizMap: Record<DomainId, Question[]> = {
-        detection: detectionQuiz as Question[],
-        "incident-response": incidentResponseQuiz as Question[],
-        "infrastructure-security": infrastructureSecurityQuiz as Question[],
-        iam: iamQuiz as Question[],
-        "data-protection": dataProtectionQuiz as Question[],
-        governance: governanceQuiz as Question[],
+        detection: detectionQuiz as unknown as Question[],
+        "incident-response": incidentResponseQuiz as unknown as Question[],
+        "infrastructure-security": infrastructureSecurityQuiz as unknown as Question[],
+        iam: iamQuiz as unknown as Question[],
+        "data-protection": dataProtectionQuiz as unknown as Question[],
+        governance: governanceQuiz as unknown as Question[],
       };
 
       questions = quizMap[domainId] || [];
+    }
+
+    // Apply difficulty filter
+    if (difficultyFilter !== "all") {
+      questions = questions.filter(q => q.difficulty === difficultyFilter);
     }
 
     if (questions.length > 0) {
@@ -211,6 +217,52 @@ export default function QuizPage() {
             )}
 
             <div className="mb-6">
+              <div className="mb-4">
+                <h3 className="text-sm font-semibold text-slate-900 mb-3">Filter by Difficulty</h3>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setDifficultyFilter("all")}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      difficultyFilter === "all"
+                        ? "bg-blue-600 text-white"
+                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    }`}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => setDifficultyFilter("easy")}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      difficultyFilter === "easy"
+                        ? "bg-emerald-600 text-white"
+                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    }`}
+                  >
+                    Easy
+                  </button>
+                  <button
+                    onClick={() => setDifficultyFilter("medium")}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      difficultyFilter === "medium"
+                        ? "bg-amber-600 text-white"
+                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    }`}
+                  >
+                    Medium
+                  </button>
+                  <button
+                    onClick={() => setDifficultyFilter("hard")}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      difficultyFilter === "hard"
+                        ? "bg-red-600 text-white"
+                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    }`}
+                  >
+                    Hard
+                  </button>
+                </div>
+              </div>
+
               <button
                 onClick={() => handleStartQuiz("mixed")}
                 className="w-full p-6 bg-gradient-to-r from-blue-50 to-emerald-50 border-2 border-blue-200 rounded-xl hover:border-blue-300 hover:shadow-sm transition-all group"
@@ -218,7 +270,7 @@ export default function QuizPage() {
                 <div className="flex items-center justify-between">
                   <div className="text-left">
                     <h3 className="text-lg font-semibold text-slate-900 mb-1">
-                      Mixed Quiz
+                      Mixed Quiz {difficultyFilter !== "all" && `(${difficultyFilter})`}
                     </h3>
                     <p className="text-sm text-slate-600">
                       Questions from all 6 domains

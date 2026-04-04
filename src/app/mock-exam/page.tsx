@@ -74,7 +74,7 @@ export default function MockExamPage() {
       ...iamQuiz,
       ...dataProtectionQuiz,
       ...governanceQuiz,
-    ] as Question[];
+    ] as unknown as Question[];
 
     const shuffled = shuffleQuestions(allQuestions);
     const examQuestions = shuffled.slice(0, 65);
