@@ -3,302 +3,200 @@
     "id": "d1-q1",
     "domain": "detection",
     "type": "single",
-    "difficulty": "easy",
-    "question": "Which AWS service is best suited to detect suspicious activity and potential threats in AWS accounts and workloads?",
+    "difficulty": "medium",
+    "question": "A financial services company needs to detect unauthorized API calls and potential account compromises across their AWS environment. The solution must use machine learning and threat intelligence without requiring any infrastructure management. Which AWS service should the security team implement?",
     "choices": [
       "Amazon GuardDuty",
-      "AWS Artifact",
-      "AWS Organizations",
-      "Amazon Route 53"
+      "AWS CloudTrail with CloudWatch Alarms",
+      "AWS Security Hub",
+      "Amazon Detective"
     ],
     "answer": "Amazon GuardDuty",
-    "explanation": "Amazon GuardDuty is a threat detection service that continuously monitors AWS accounts, workloads, and data sources for malicious or unauthorized behavior."
+    "explanation": "GuardDuty is the correct choice because it provides intelligent threat detection using machine learning, anomaly detection, and integrated threat intelligence. It continuously monitors CloudTrail logs, VPC Flow Logs, and DNS logs without requiring any agents or infrastructure. GuardDuty is specifically designed for automated threat detection.",
+    "why_not": {
+      "AWS CloudTrail with CloudWatch Alarms": "CloudTrail records API calls but doesn't provide intelligent threat detection or machine learning capabilities. You would need to manually create alarms for specific patterns, which doesn't scale and lacks the threat intelligence that GuardDuty provides.",
+      "AWS Security Hub": "Security Hub aggregates and prioritizes findings from multiple sources but doesn't generate threat detections itself. It requires GuardDuty or other services to actually detect threats—it's a centralized dashboard, not a detection service.",
+      "Amazon Detective": "Detective is used for investigating and analyzing the root cause of security findings after they've been detected. It doesn't detect threats—it helps you understand how an incident happened after GuardDuty or another service has identified it."
+    }
   },
   {
     "id": "d1-q2",
     "domain": "detection",
     "type": "single",
-    "difficulty": "easy",
-    "question": "A company wants to automatically discover and protect sensitive data stored in Amazon S3. Which service should they use?",
+    "difficulty": "hard",
+    "question": "A healthcare organization stores patient records in multiple S3 buckets across different accounts. They must identify any buckets containing unencrypted PHI (Protected Health Information) and detect if sensitive data is publicly accessible. The solution must use machine learning to identify PHI patterns. What is the MOST appropriate AWS service for this requirement?",
     "choices": [
       "Amazon Macie",
-      "AWS Shield",
-      "AWS WAF",
+      "Amazon GuardDuty",
+      "AWS Config with custom rules",
       "Amazon Inspector"
     ],
     "answer": "Amazon Macie",
-    "explanation": "Amazon Macie uses machine learning to automatically discover, classify, and protect sensitive data in S3, such as PII and financial information."
+    "explanation": "Macie is specifically designed for discovering and protecting sensitive data in S3 using machine learning. It can identify PHI, PII, and financial data using managed data identifiers, detect unencrypted sensitive data, and identify overly permissive bucket policies. Macie is the only service that combines data classification with S3 security posture assessment.",
+    "why_not": {
+      "Amazon GuardDuty": "GuardDuty detects threats like unauthorized access attempts and data exfiltration but doesn't classify or discover sensitive data within S3 objects. It monitors for malicious activity, not data content or classification.",
+      "AWS Config with custom rules": "Config can check S3 bucket configurations (like encryption settings and public access) but cannot scan object contents to identify PHI or classify sensitive data. It's for configuration compliance, not data discovery.",
+      "Amazon Inspector": "Inspector scans EC2 instances and container images for vulnerabilities and network exposure. It doesn't analyze S3 data or perform data classification—it's focused on compute resources, not storage."
+    }
   },
   {
     "id": "d1-q3",
     "domain": "detection",
     "type": "single",
-    "difficulty": "easy",
-    "question": "Which AWS service provides a comprehensive view of security alerts and compliance status across multiple AWS accounts?",
+    "difficulty": "hard",
+    "question": "A security team receives a GuardDuty finding indicating 'UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration' with high severity. They need to investigate how the credentials were compromised, identify all affected resources, and understand the blast radius. Which service should they use to conduct this investigation?",
     "choices": [
+      "Amazon Detective",
+      "AWS CloudTrail",
       "AWS Security Hub",
-      "Amazon CloudWatch",
-      "AWS Config",
-      "AWS Systems Manager"
+      "Amazon GuardDuty"
     ],
-    "answer": "AWS Security Hub",
-    "explanation": "AWS Security Hub aggregates, organizes, and prioritizes security findings from multiple AWS services and third-party tools, providing a comprehensive security posture view."
+    "answer": "Amazon Detective",
+    "explanation": "Detective is specifically designed for security investigations and root cause analysis. It automatically collects and analyzes data from CloudTrail, VPC Flow Logs, and GuardDuty findings, then uses graph analysis and machine learning to visualize relationships between resources, users, and activities. Detective helps answer 'how did this happen' and 'what's the impact' questions that arise after GuardDuty detects a threat.",
+    "why_not": {
+      "AWS CloudTrail": "While CloudTrail logs contain the API call history needed for investigation, manually analyzing CloudTrail logs is time-consuming and doesn't provide the automated correlation, visualization, and context that Detective offers. You'd need to manually piece together the attack timeline.",
+      "AWS Security Hub": "Security Hub aggregates the GuardDuty finding and provides context about your security posture, but it doesn't provide investigation capabilities or root cause analysis. It shows you what findings exist, not how they happened or their full impact.",
+      "Amazon GuardDuty": "GuardDuty detected the threat and generated the finding, but it doesn't provide investigation or root cause analysis capabilities. It tells you something bad happened but not the full story of how, why, or the complete blast radius."
+    }
   },
   {
     "id": "d1-q4",
     "domain": "detection",
-    "type": "multiple",
+    "type": "single",
     "difficulty": "medium",
-    "question": "What type of logs does Amazon GuardDuty analyze to detect threats? (Select all that apply)",
+    "question": "A company needs to ensure all API calls made in their AWS account are logged for compliance and forensic purposes. The logs must be tamper-proof and retained for 7 years. Which combination of services should they implement?",
     "choices": [
-      "CloudTrail logs",
-      "VPC Flow Logs",
-      "DNS logs",
-      "Application logs from EC2 instances"
+      "CloudTrail with log file validation and S3 with Object Lock",
+      "CloudWatch Logs with encryption",
+      "GuardDuty with S3 storage",
+      "Security Hub with CloudTrail integration"
     ],
-    "answer": ["CloudTrail logs", "VPC Flow Logs", "DNS logs"],
-    "explanation": "GuardDuty analyzes multiple data sources including CloudTrail management and data events, VPC Flow Logs, and DNS logs to identify potential security threats. It does not analyze application logs."
+    "answer": "CloudTrail with log file validation and S3 with Object Lock",
+    "explanation": "CloudTrail records all API calls and provides log file validation using SHA-256 hashing to detect tampering. Storing logs in S3 with Object Lock (compliance mode) ensures logs cannot be deleted or modified for the specified retention period, meeting the tamper-proof and 7-year retention requirements.",
+    "why_not": {
+      "CloudWatch Logs with encryption": "CloudWatch Logs can store CloudTrail data but doesn't provide the same level of tamper-proof guarantees as S3 Object Lock. Additionally, long-term storage in CloudWatch Logs is more expensive than S3, and CloudWatch doesn't offer the same immutability features.",
+      "GuardDuty with S3 storage": "GuardDuty analyzes logs for threats but doesn't record API calls. It's a threat detection service, not an audit logging service. You need CloudTrail to actually capture the API call history.",
+      "Security Hub with CloudTrail integration": "Security Hub aggregates findings and can receive CloudTrail events, but it doesn't store comprehensive API logs for 7 years or provide tamper-proof storage. It's a security findings aggregator, not a log archival solution."
+    }
   },
   {
     "id": "d1-q5",
     "domain": "detection",
     "type": "single",
-    "difficulty": "medium",
-    "question": "A security team needs to create custom alerts when specific API calls are made in their AWS account. Which combination of services should they use?",
+    "difficulty": "easy",
+    "question": "A startup needs a centralized dashboard to view security findings from GuardDuty, Inspector, and Macie across multiple AWS accounts. They also need automated compliance checks against CIS AWS Foundations Benchmark. Which service provides this capability?",
     "choices": [
-      "CloudTrail + CloudWatch Logs + CloudWatch Alarms",
-      "GuardDuty + SNS",
-      "Security Hub + Lambda",
-      "Config + EventBridge"
+      "AWS Security Hub",
+      "Amazon CloudWatch",
+      "AWS Systems Manager",
+      "AWS Config"
     ],
-    "answer": "CloudTrail + CloudWatch Logs + CloudWatch Alarms",
-    "explanation": "CloudTrail captures API calls, CloudWatch Logs stores them, and metric filters with CloudWatch Alarms can trigger notifications for specific API activity patterns."
+    "answer": "AWS Security Hub",
+    "explanation": "Security Hub provides a centralized security dashboard that aggregates findings from GuardDuty, Inspector, Macie, and other AWS security services. It also runs automated compliance checks against standards like CIS, PCI-DSS, and AWS Foundational Security Best Practices, making it the perfect solution for this requirement.",
+    "why_not": {
+      "Amazon CloudWatch": "CloudWatch is for operational monitoring, metrics, and logs. While it can display custom dashboards, it doesn't natively aggregate security findings from GuardDuty, Inspector, and Macie, nor does it provide automated compliance checks against security standards.",
+      "AWS Systems Manager": "Systems Manager is for operational management of EC2 instances and on-premises servers (patching, configuration, automation). It doesn't aggregate security findings or perform compliance checks against security benchmarks.",
+      "AWS Config": "Config tracks resource configuration changes and can check compliance against rules, but it doesn't aggregate findings from GuardDuty, Inspector, and Macie. It's focused on configuration compliance, not security findings aggregation."
+    }
   },
   {
     "id": "d1-q6",
     "domain": "detection",
     "type": "single",
     "difficulty": "medium",
-    "question": "What is the purpose of CloudTrail log file validation?",
+    "question": "A security engineer needs to create an alarm that triggers when more than 5 failed console login attempts occur within 10 minutes. The alarm should send notifications to the security team. Which approach should they use?",
     "choices": [
-      "To verify that log files have not been tampered with",
-      "To compress log files for storage",
-      "To encrypt log files",
-      "To automatically delete old logs"
+      "Create a CloudWatch metric filter on CloudTrail logs for failed console logins, then create a CloudWatch Alarm",
+      "Configure GuardDuty to detect failed login attempts",
+      "Use AWS Config to monitor IAM user activity",
+      "Enable Security Hub compliance checks"
     ],
-    "answer": "To verify that log files have not been tampered with",
-    "explanation": "CloudTrail log file validation creates digital signatures that allow you to verify the integrity of log files and detect if they have been modified or deleted after delivery."
+    "answer": "Create a CloudWatch metric filter on CloudTrail logs for failed console logins, then create a CloudWatch Alarm",
+    "explanation": "CloudTrail logs all console login attempts. By creating a metric filter on CloudTrail logs that matches failed console sign-in events (eventName: ConsoleLogin with errorMessage), you can extract a custom metric. Then create a CloudWatch Alarm on this metric to trigger when it exceeds 5 within 10 minutes, sending notifications via SNS.",
+    "why_not": {
+      "Configure GuardDuty to detect failed login attempts": "GuardDuty detects threats like brute force attacks and credential compromise but doesn't provide customizable alerting for specific thresholds like '5 failed attempts in 10 minutes.' It generates findings based on its ML models, not custom metric thresholds.",
+      "Use AWS Config to monitor IAM user activity": "Config tracks resource configuration changes, not real-time activity like login attempts. It's designed for configuration compliance, not operational monitoring or custom alerting on user activity patterns.",
+      "Enable Security Hub compliance checks": "Security Hub aggregates findings and checks compliance against standards, but it doesn't provide custom metric-based alerting for specific activity patterns like failed login attempts. It's for security posture assessment, not operational alerting."
+    }
   },
   {
     "id": "d1-q7",
     "domain": "detection",
     "type": "single",
-    "difficulty": "medium",
-    "question": "Which AWS service centralizes security data from multiple sources into a purpose-built data lake?",
+    "difficulty": "hard",
+    "question": "A large enterprise with 200 AWS accounts needs to centralize security data from CloudTrail, VPC Flow Logs, Route 53 logs, and GuardDuty findings for long-term analysis and SIEM integration. The data must be normalized to a standard format and queryable via SQL. Cost-effective long-term storage is required. What solution meets these requirements?",
     "choices": [
-      "Amazon Security Lake",
-      "AWS Security Hub",
-      "Amazon S3",
-      "AWS Lake Formation"
+      "Amazon Security Lake with S3 storage and Athena queries",
+      "CloudTrail Lake for all log types",
+      "CloudWatch Logs with Logs Insights",
+      "Security Hub with custom integrations"
     ],
-    "answer": "Amazon Security Lake",
-    "explanation": "Amazon Security Lake automatically centralizes security data from AWS and third-party sources into a data lake stored in your account, normalized to the OCSF format."
+    "answer": "Amazon Security Lake with S3 storage and Athena queries",
+    "explanation": "Security Lake automatically centralizes security data from multiple sources (CloudTrail, VPC Flow Logs, Route 53, GuardDuty) across all accounts, normalizes it to OCSF (Open Cybersecurity Schema Framework), stores it in S3 for cost-effective long-term retention, and enables SQL queries via Athena. It's specifically designed for this use case and supports SIEM integrations.",
+    "why_not": {
+      "CloudTrail Lake for all log types": "CloudTrail Lake only stores CloudTrail data (API calls), not VPC Flow Logs, Route 53 logs, or GuardDuty findings. It's limited to CloudTrail events, making it insufficient for comprehensive security data centralization across multiple log types.",
+      "CloudWatch Logs with Logs Insights": "CloudWatch Logs can receive data from multiple sources but doesn't automatically normalize it to a standard format like OCSF. Long-term storage in CloudWatch is expensive compared to S3, and it's not designed for multi-account security data aggregation at scale.",
+      "Security Hub with custom integrations": "Security Hub aggregates security findings but doesn't store raw log data from CloudTrail, VPC Flow Logs, or Route 53. It's for findings aggregation and compliance checking, not comprehensive log data storage and analysis."
+    }
   },
   {
     "id": "d1-q8",
     "domain": "detection",
     "type": "single",
-    "difficulty": "hard",
-    "question": "A company has enabled GuardDuty in their AWS account. They receive a finding with severity 'High' indicating cryptocurrency mining activity. What data sources did GuardDuty likely analyze to generate this finding?",
+    "difficulty": "medium",
+    "question": "A company discovered that an EC2 instance is communicating with a known malicious IP address. GuardDuty generated a finding, but the security team needs to automatically isolate the instance by modifying its security group. What is the MOST efficient way to automate this response?",
     "choices": [
-      "VPC Flow Logs and DNS logs",
-      "Only CloudTrail logs",
-      "Only VPC Flow Logs",
-      "Application logs and CloudWatch metrics"
+      "Create an EventBridge rule that triggers a Lambda function when GuardDuty generates the finding",
+      "Configure Security Hub to automatically remediate the issue",
+      "Use AWS Config remediation actions",
+      "Set up CloudWatch Alarms to trigger SNS notifications"
     ],
-    "answer": "VPC Flow Logs and DNS logs",
-    "explanation": "Cryptocurrency mining findings are typically detected through unusual network traffic patterns (VPC Flow Logs) and DNS queries to known mining pools (DNS logs). CloudTrail logs track API calls, not network traffic."
+    "answer": "Create an EventBridge rule that triggers a Lambda function when GuardDuty generates the finding",
+    "explanation": "GuardDuty publishes findings to EventBridge (formerly CloudWatch Events). You can create an EventBridge rule that matches GuardDuty findings with specific criteria (like communication with malicious IPs) and triggers a Lambda function to automatically modify the instance's security group to isolate it. This provides real-time automated response.",
+    "why_not": {
+      "Configure Security Hub to automatically remediate the issue": "Security Hub can aggregate findings and trigger custom actions via EventBridge, but it doesn't have built-in automatic remediation capabilities. You still need to create the EventBridge rule and Lambda function—Security Hub is just an intermediary.",
+      "Use AWS Config remediation actions": "Config remediation is for configuration compliance issues (like 'S3 bucket should be encrypted'), not for responding to threat detections. Config doesn't integrate with GuardDuty findings for automated threat response.",
+      "Set up CloudWatch Alarms to trigger SNS notifications": "CloudWatch Alarms work with metrics, not GuardDuty findings. GuardDuty findings are events, not metrics. Additionally, SNS notifications only alert humans—they don't automatically modify security groups. You need EventBridge and Lambda for automated remediation."
+    }
   },
   {
     "id": "d1-q9",
     "domain": "detection",
     "type": "single",
-    "difficulty": "hard",
-    "question": "A security engineer needs to query CloudTrail logs to find all API calls made by a specific IAM user over the past 90 days. Which service provides the MOST efficient solution?",
+    "difficulty": "easy",
+    "question": "A security team wants to ensure CloudTrail logs have not been tampered with after they were delivered to S3. Which CloudTrail feature should they enable?",
     "choices": [
-      "CloudTrail Lake",
-      "CloudWatch Logs Insights",
-      "Amazon Athena with S3",
-      "AWS Config"
+      "Log file validation",
+      "S3 bucket versioning",
+      "CloudTrail Insights",
+      "Multi-region trail"
     ],
-    "answer": "CloudTrail Lake",
-    "explanation": "CloudTrail Lake is purpose-built for querying CloudTrail events with SQL-like queries. It's more efficient than Athena for CloudTrail data and provides faster query performance with built-in retention."
+    "answer": "Log file validation",
+    "explanation": "CloudTrail log file validation uses SHA-256 hashing to create a digest file for every log file delivered. This allows you to verify that log files haven't been modified, deleted, or forged after CloudTrail delivered them. It's specifically designed for tamper detection.",
+    "why_not": {
+      "S3 bucket versioning": "Versioning helps recover deleted or modified objects but doesn't cryptographically prove that logs haven't been tampered with. It's a recovery mechanism, not a tamper-detection mechanism. You can still modify objects even with versioning enabled.",
+      "CloudTrail Insights": "Insights detects unusual API activity patterns (like sudden spikes in API calls) to help identify anomalies. It doesn't validate log file integrity or detect tampering—it's for behavioral analysis, not log validation.",
+      "Multi-region trail": "Multi-region trails capture API activity across all regions, ensuring comprehensive logging. However, this doesn't validate log integrity or detect tampering—it's about coverage, not validation."
+    }
   },
   {
     "id": "d1-q10",
     "domain": "detection",
-    "type": "multiple",
-    "difficulty": "hard",
-    "question": "Which of the following are valid data sources for Amazon GuardDuty? (Select all that apply)",
-    "choices": [
-      "VPC Flow Logs",
-      "CloudTrail management events",
-      "CloudTrail S3 data events",
-      "EKS audit logs",
-      "RDS database logs"
-    ],
-    "answer": ["VPC Flow Logs", "CloudTrail management events", "CloudTrail S3 data events", "EKS audit logs"],
-    "explanation": "GuardDuty analyzes VPC Flow Logs, CloudTrail management events, CloudTrail S3 data events, DNS logs, and EKS audit logs. It does not analyze RDS database logs."
-  },
-  {
-    "id": "d1-q11",
-    "domain": "detection",
-    "type": "single",
-    "difficulty": "easy",
-    "question": "What is the primary purpose of Amazon Macie?",
-    "choices": [
-      "Discovering and protecting sensitive data in S3",
-      "Detecting network intrusions",
-      "Managing encryption keys",
-      "Monitoring API calls"
-    ],
-    "answer": "Discovering and protecting sensitive data in S3",
-    "explanation": "Amazon Macie is specifically designed to discover, classify, and protect sensitive data stored in Amazon S3 using machine learning."
-  },
-  {
-    "id": "d1-q12",
-    "domain": "detection",
-    "type": "single",
-    "difficulty": "medium",
-    "question": "How does AWS Security Hub differ from Amazon GuardDuty?",
-    "choices": [
-      "Security Hub aggregates findings from multiple services, GuardDuty detects threats",
-      "Security Hub detects threats, GuardDuty aggregates findings",
-      "They are the same service with different names",
-      "Security Hub only works with CloudTrail, GuardDuty works with all logs"
-    ],
-    "answer": "Security Hub aggregates findings from multiple services, GuardDuty detects threats",
-    "explanation": "GuardDuty is a threat detection service, while Security Hub is a security posture management service that aggregates and prioritizes findings from GuardDuty, Inspector, Macie, and other sources."
-  },
-  {
-    "id": "d1-q13",
-    "domain": "detection",
-    "type": "single",
-    "difficulty": "medium",
-    "question": "A company wants to detect when an S3 bucket policy is modified to allow public access. Which service should they use?",
-    "choices": [
-      "AWS Config with a managed rule",
-      "Amazon GuardDuty",
-      "AWS CloudTrail only",
-      "Amazon Macie"
-    ],
-    "answer": "AWS Config with a managed rule",
-    "explanation": "AWS Config can continuously monitor S3 bucket configurations and alert when policies change. The s3-bucket-public-read-prohibited and s3-bucket-public-write-prohibited managed rules specifically detect public access."
-  },
-  {
-    "id": "d1-q14",
-    "domain": "detection",
     "type": "single",
     "difficulty": "hard",
-    "question": "A security team receives a GuardDuty finding: 'UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration'. What does this finding indicate?",
+    "question": "A financial institution must comply with regulations requiring real-time detection of data exfiltration attempts from their S3 buckets containing customer financial records. The solution must identify unusual data access patterns and alert within minutes. Which combination of services provides the BEST solution?",
     "choices": [
-      "EC2 instance credentials are being used from an external IP address",
-      "An IAM user's password was compromised",
-      "An S3 bucket is publicly accessible",
-      "A security group allows unrestricted access"
+      "GuardDuty with S3 protection enabled and EventBridge for alerting",
+      "Macie with scheduled discovery jobs",
+      "CloudTrail with CloudWatch Logs Insights",
+      "VPC Flow Logs with CloudWatch Alarms"
     ],
-    "answer": "EC2 instance credentials are being used from an external IP address",
-    "explanation": "This finding indicates that credentials assigned to an EC2 instance through an IAM role are being used from an IP address that is not associated with the instance, suggesting credential exfiltration."
-  },
-  {
-    "id": "d1-q15",
-    "domain": "detection",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A company needs to analyze CloudTrail logs for security investigations but wants to minimize costs. They need to query logs from the past 7 years. What is the MOST cost-effective solution?",
-    "choices": [
-      "Store logs in S3 with Glacier storage class and use Athena for queries",
-      "Use CloudTrail Lake with 7-year retention",
-      "Use CloudWatch Logs Insights with extended retention",
-      "Store logs in S3 Standard and use CloudTrail Lake"
-    ],
-    "answer": "Store logs in S3 with Glacier storage class and use Athena for queries",
-    "explanation": "For long-term retention (7 years), storing CloudTrail logs in S3 with Glacier storage class is most cost-effective. Athena can query the logs when needed. CloudTrail Lake is more expensive for very long retention periods."
-  },
-  {
-    "id": "d1-q16",
-    "domain": "detection",
-    "type": "multiple",
-    "difficulty": "medium",
-    "question": "Which AWS services can send findings to AWS Security Hub? (Select all that apply)",
-    "choices": [
-      "Amazon GuardDuty",
-      "Amazon Inspector",
-      "Amazon Macie",
-      "AWS IAM Access Analyzer",
-      "Amazon CloudWatch"
-    ],
-    "answer": ["Amazon GuardDuty", "Amazon Inspector", "Amazon Macie", "AWS IAM Access Analyzer"],
-    "explanation": "Security Hub integrates with GuardDuty, Inspector, Macie, IAM Access Analyzer, Firewall Manager, and many other AWS and third-party security services. CloudWatch is a monitoring service that doesn't send security findings."
-  },
-  {
-    "id": "d1-q17",
-    "domain": "detection",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A company wants to detect when sensitive data like credit card numbers are uploaded to S3 buckets. They need automated scanning and alerting. What is the BEST approach?",
-    "choices": [
-      "Enable Macie with custom data identifiers and EventBridge integration",
-      "Use Lambda to scan all S3 uploads",
-      "Enable S3 access logging and analyze with Athena",
-      "Use GuardDuty to monitor S3 data events"
-    ],
-    "answer": "Enable Macie with custom data identifiers and EventBridge integration",
-    "explanation": "Macie is specifically designed for sensitive data discovery in S3. Custom data identifiers can detect specific patterns like credit card numbers, and EventBridge can trigger alerts when findings are generated."
-  },
-  {
-    "id": "d1-q18",
-    "domain": "detection",
-    "type": "single",
-    "difficulty": "medium",
-    "question": "What is the difference between CloudTrail management events and data events?",
-    "choices": [
-      "Management events are control plane operations, data events are data plane operations",
-      "Management events are free, data events require payment",
-      "Management events are logged automatically, data events are not",
-      "There is no difference"
-    ],
-    "answer": "Management events are control plane operations, data events are data plane operations",
-    "explanation": "Management events capture control plane operations (e.g., CreateBucket, TerminateInstances), while data events capture data plane operations (e.g., GetObject, PutObject). Both can be logged, but data events incur additional charges."
-  },
-  {
-    "id": "d1-q19",
-    "domain": "detection",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A security engineer notices that CloudWatch Logs Insights queries are timing out when analyzing large volumes of CloudTrail logs. What is the BEST long-term solution?",
-    "choices": [
-      "Migrate to CloudTrail Lake for better query performance",
-      "Increase the CloudWatch Logs retention period",
-      "Split logs into multiple log groups",
-      "Use S3 Select instead"
-    ],
-    "answer": "Migrate to CloudTrail Lake for better query performance",
-    "explanation": "CloudTrail Lake is optimized for querying large volumes of CloudTrail events with better performance than CloudWatch Logs Insights. It uses a columnar storage format designed for analytical queries."
-  },
-  {
-    "id": "d1-q20",
-    "domain": "detection",
-    "type": "single",
-    "difficulty": "hard",
-    "question": "A company has multiple AWS accounts and wants to centralize GuardDuty findings. They also want to automatically enable GuardDuty in new accounts. What should they configure?",
-    "choices": [
-      "GuardDuty delegated administrator in AWS Organizations",
-      "GuardDuty in each account with EventBridge forwarding",
-      "Security Hub aggregation only",
-      "CloudFormation StackSets to deploy GuardDuty"
-    ],
-    "answer": "GuardDuty delegated administrator in AWS Organizations",
-    "explanation": "GuardDuty supports delegated administrator accounts in AWS Organizations, which can centrally manage GuardDuty across all accounts and automatically enable it in new accounts."
+    "answer": "GuardDuty with S3 protection enabled and EventBridge for alerting",
+    "explanation": "GuardDuty S3 Protection continuously monitors S3 data events in CloudTrail for suspicious access patterns that may indicate data exfiltration (like unusual API calls, large downloads, or access from suspicious IPs). It uses machine learning to detect anomalies and generates findings within minutes. EventBridge enables real-time alerting when findings are generated.",
+    "why_not": {
+      "Macie with scheduled discovery jobs": "Macie discovers and classifies sensitive data in S3 but doesn't provide real-time threat detection for data exfiltration. Discovery jobs run on a schedule (not continuously) and focus on data classification, not access pattern analysis for threats.",
+      "CloudTrail with CloudWatch Logs Insights": "While CloudTrail logs S3 API calls and Logs Insights can query them, this requires manual query creation and doesn't provide intelligent, ML-based detection of unusual patterns. It's reactive analysis, not proactive threat detection, and lacks the real-time alerting capabilities.",
+      "VPC Flow Logs with CloudWatch Alarms": "VPC Flow Logs capture network traffic but don't provide visibility into S3 API calls or data access patterns. S3 is accessed via API calls (not network flows in the traditional sense), so VPC Flow Logs won't detect S3 data exfiltration."
+    }
   }
 ]

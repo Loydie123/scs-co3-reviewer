@@ -128,18 +128,37 @@ export function QuestionCard({
       </div>
 
       {isSubmitted && showResult && (
-        <div className={`mt-6 p-5 rounded-xl border ${isCorrect ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"}`}>
-          <p className={`text-sm font-semibold mb-2 ${isCorrect ? "text-emerald-700" : "text-red-700"}`}>
-            {isCorrect ? "✓ Correct" : "✗ Incorrect"}
-          </p>
-          {isMultiple && (
-            <p className="text-xs text-slate-600 mb-2">
-              Correct answer(s): {correctArray.join(", ")}
+        <div className="mt-6 space-y-4">
+          <div className={`p-5 rounded-xl border ${isCorrect ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"}`}>
+            <p className={`text-sm font-semibold mb-2 ${isCorrect ? "text-emerald-700" : "text-red-700"}`}>
+              {isCorrect ? "✓ Correct" : "✗ Incorrect"}
             </p>
+            {isMultiple && (
+              <p className="text-xs text-slate-600 mb-2">
+                Correct answer(s): {correctArray.join(", ")}
+              </p>
+            )}
+            <p className="text-sm text-slate-700 leading-relaxed">
+              <span className="font-semibold">Why this is correct: </span>
+              {question.explanation}
+            </p>
+          </div>
+
+          {question.why_not && Object.keys(question.why_not).length > 0 && (
+            <div className="p-5 rounded-xl border bg-slate-50 border-slate-200">
+              <p className="text-sm font-semibold text-slate-900 mb-3">
+                Why other options are incorrect:
+              </p>
+              <div className="space-y-3">
+                {Object.entries(question.why_not).map(([option, reason]) => (
+                  <div key={option} className="text-sm">
+                    <p className="font-medium text-slate-700 mb-1">❌ {option}</p>
+                    <p className="text-slate-600 leading-relaxed pl-5">{reason}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
-          <p className="text-sm text-slate-700 leading-relaxed">
-            {question.explanation}
-          </p>
         </div>
       )}
     </div>

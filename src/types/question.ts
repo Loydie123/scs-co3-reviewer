@@ -12,6 +12,7 @@ export interface Question {
   explanation: string;
   difficulty: QuestionDifficulty;
   type: QuestionType;
+  why_not?: Record<string, string>;
 }
 
 export interface QuizState {
